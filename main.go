@@ -25,6 +25,6 @@ func New(host, username, password string) Client {
 
 func (c *DefaultClient) resolve(resource string) string {
 	// TODO: Use a proper URL resolve to parse the string and append the resource
-	fmt.Println("Api call to ", c.Host + resource)
+	fmt.Println("Api call to:", c.Host + resource)
 	return c.Host + resource
 }
