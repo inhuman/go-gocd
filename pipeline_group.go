@@ -32,7 +32,7 @@ func (c *DefaultClient) GetPipelineGroups() ([]*PipelineGroup, error) {
 	// Somehow GoCD will return "The resource you requested was not found!" if you specify an Accept header
 	_, body, errs := c.Request.
 		Get(c.resolve("/go/api/config/pipeline_groups")).
-		Set("Accept", "application/vnd.go.cd.v" + strconv.Itoa(ApiVersion) + "+json").
+		//Set("Accept", "application/vnd.go.cd.v" + strconv.Itoa(ApiVersion) + "+json").
 		End()
 
 	if errs != nil {
