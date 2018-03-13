@@ -1,7 +1,5 @@
 package gocd
 
-import "net/http"
-
 // Client interface that exposes all the API methods supported by the underlying Client
 type Client interface {
 	// Agents API
@@ -23,8 +21,4 @@ type Client interface {
 	// Environment Config API
 	GetAllEnvironmentConfigs() ([]*EnvironmentConfig, error)
 	GetEnvironmentConfig(name string) (*EnvironmentConfig, error)
-
-	// Service API
-	SetHttpClientTransport(transport http.Transport)
-
 }
