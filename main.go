@@ -5,7 +5,6 @@ import (
 
 	"github.com/parnurzeal/gorequest"
 	"net/http"
-	"crypto/tls"
 )
 
 // DefaultClient entrypoint for GoCD
@@ -16,17 +15,6 @@ type DefaultClient struct {
 
 // New GoCD Client
 func New(host, username, password string) Client {
-
-	httpClient := &http.Client{
-		Transport: &http.Transport{
-			TLSHandshakeTimeout: 5 * time.Second,
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}}
-
-	superAgent := gorequest.New()
-	superAgent.Client = httpClient
 
 	client := DefaultClient{
 		Host:    host,
