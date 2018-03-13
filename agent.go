@@ -3,8 +3,8 @@ package gocd
 import (
 	"encoding/json"
 	"fmt"
-
-	multierror "github.com/hashicorp/go-multierror"
+	"github.com/hashicorp/go-multierror"
+	"strconv"
 )
 
 // Agent Object
@@ -28,7 +28,7 @@ func (c *DefaultClient) GetAllAgents() ([]*Agent, error) {
 
 	_, body, errs := c.Request.
 		Get(c.resolve("/go/api/agents")).
-		Set("Accept", "application/vnd.go.cd.v2+json").
+		Set("Accept", "application/vnd.go.cd.v"+strconv.Itoa(ApiVersion)+"+json").
 		End()
 	if errs != nil {
 		errors = multierror.Append(errors, errs...)
@@ -57,7 +57,7 @@ func (c *DefaultClient) GetAgent(uuid string) (*Agent, error) {
 
 	_, body, errs := c.Request.
 		Get(c.resolve(fmt.Sprintf("/go/api/agents/%s", uuid))).
-		Set("Accept", "application/vnd.go.cd.v2+json").
+		Set("Accept", "application/vnd.go.cd.v"+strconv.Itoa(ApiVersion)+"+json").
 		End()
 	errors = multierror.Append(errors, errs...)
 	if errs != nil {
@@ -80,7 +80,7 @@ func (c *DefaultClient) UpdateAgent(uuid string, agent *Agent) (*Agent, error) {
 
 	_, body, errs := c.Request.
 		Patch(c.resolve(fmt.Sprintf("/go/api/agents/%s", uuid))).
-		Set("Accept", "application/vnd.go.cd.v2+json").
+		Set("Accept", "application/vnd.go.cd.v"+strconv.Itoa(ApiVersion)+"+json").
 		SendStruct(agent).
 		End()
 	multierror.Append(errors, errs...)
@@ -123,7 +123,7 @@ func (c *DefaultClient) DeleteAgent(uuid string) error {
 
 	_, _, errs := c.Request.
 		Delete(c.resolve(fmt.Sprintf("/go/api/agents/%s", uuid))).
-		Set("Accept", "application/vnd.go.cd.v2+json").
+		Set("Accept", "application/vnd.go.cd.v" + strconv.Itoa(ApiVersion) + "+json").
 		End()
 	if errs != nil && len(errs) > 0 {
 		errors = multierror.Append(errors, errs...)
@@ -136,7 +136,7 @@ func (c *DefaultClient) AgentRunJobHistory(uuid string, offset int) ([]*JobHisto
 	var errors *multierror.Error
 	_, body, errs := c.Request.
 		Get(c.resolve(fmt.Sprintf("/go/api/agents/%s/job_run_history/%d", uuid, offset))).
-		Set("Accept", "application/vnd.go.cd.v2+json").
+		Set("Accept", "application/vnd.go.cd.v"+strconv.Itoa(ApiVersion)+"+json").
 		End()
 	if errs != nil {
 		errors = multierror.Append(errors, errs...)

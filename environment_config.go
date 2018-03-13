@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	multierror "github.com/hashicorp/go-multierror"
+	"strconv"
 )
 
 // EnvironmentConfig Object
@@ -50,7 +51,7 @@ func (c *DefaultClient) GetAllEnvironmentConfigs() ([]*EnvironmentConfig, error)
 
 	_, body, errs := c.Request.
 		Get(c.resolve("/go/api/admin/environments")).
-		Set("Accept", "application/vnd.go.cd.v2+json").
+		Set("Accept", "application/vnd.go.cd.v" + strconv.Itoa(ApiVersion) + "+json").
 		End()
 	if errs != nil {
 		errors = multierror.Append(errors, errs...)
@@ -79,7 +80,7 @@ func (c *DefaultClient) GetEnvironmentConfig(name string) (*EnvironmentConfig, e
 
 	_, body, errs := c.Request.
 		Get(c.resolve(fmt.Sprintf("/go/api/admin/environments/%s", name))).
-		Set("Accept", "application/vnd.go.cd.v2+json").
+		Set("Accept", "application/vnd.go.cd.v" + strconv.Itoa(ApiVersion) + "+json").
 		End()
 	errors = multierror.Append(errors, errs...)
 	if errs != nil {

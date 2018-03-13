@@ -2,9 +2,10 @@ package gocd
 
 import (
 	"time"
-
 	"github.com/parnurzeal/gorequest"
 )
+
+const ApiVersion = 4
 
 // DefaultClient entrypoint for GoCD
 type DefaultClient struct {

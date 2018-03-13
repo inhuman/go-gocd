@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	multierror "github.com/hashicorp/go-multierror"
+	"strconv"
 )
 
 // ScheduledJobResource wrapper for resources > resource
@@ -56,6 +57,7 @@ func (c *DefaultClient) GetScheduledJobs() ([]*ScheduledJob, error) {
 	var jobs ScheduledJobsResponse
 	_, body, errs := c.Request.
 		Get(c.resolve("/go/api/jobs/scheduled.xml")).
+		Set("Accept", "application/vnd.go.cd.v" + strconv.Itoa(ApiVersion) + "+json").
 		End()
 	if errs != nil {
 		errors = multierror.Append(errors, errs...)
@@ -98,7 +100,7 @@ func (c *DefaultClient) GetJobHistory(pipeline, stage, job string, offset int) (
 	var errors *multierror.Error
 	_, body, errs := c.Request.
 		Get(c.resolve(fmt.Sprintf("/go/api/jobs/%s/%s/%s/history/%d", pipeline, stage, job, offset))).
-		Set("Accept", "application/vnd.go.cd.v2+json").
+		Set("Accept", "application/vnd.go.cd.v" + strconv.Itoa(ApiVersion) + "+json").
 		End()
 	if errs != nil {
 		errors = multierror.Append(errors, errs...)
