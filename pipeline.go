@@ -111,7 +111,7 @@ type Material struct {
 }
 
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, error) {
-	var errors *multierror.Error
+	var multiError *multierror.Error
 
 	_, body, errs := c.Request.
 		Get(c.resolve(fmt.Sprintf("/go/api/pipelines/%s/status", pipelineName))).
@@ -119,18 +119,18 @@ func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus,
 		End()
 
 	if errs != nil {
-		errors = multierror.Append(errors, errs...)
-		return nil, errors.ErrorOrNil()
+		multiError = multierror.Append(multiError, errs...)
+		return nil, multiError.ErrorOrNil()
 	}
 	var PipelineStatus PipelineStatus
 
 	jsonErr := json.Unmarshal([]byte(body), &PipelineStatus)
 	if jsonErr != nil {
-		errors = multierror.Append(errors, jsonErr)
-		return nil, errors.ErrorOrNil()
+		multiError = multierror.Append(multiError, jsonErr)
+		return nil, multiError.ErrorOrNil()
 	}
 
-	return &PipelineStatus, errors.ErrorOrNil()
+	return &PipelineStatus, multiError.ErrorOrNil()
 }
 
 func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*CreatePipelineResponse, error) {
