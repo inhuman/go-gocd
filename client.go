@@ -14,6 +14,9 @@ type Client interface {
 	// Pipeline Groups API
 	GetPipelineGroups() ([]*PipelineGroup, error)
 
+	// Pipeline API
+	GetPipelineStatus(pipelineName string) (*PipelineStatus, error)
+
 	// Jobs API
 	GetScheduledJobs() ([]*ScheduledJob, error)
 	GetJobHistory(pipeline, stage, job string, offset int) ([]*JobHistory, error)
