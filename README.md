@@ -39,8 +39,8 @@ func main() {
   - [ ] Notify git materials
 - [ ] Backups
   - [ ] Create a backup
-- [ ] Pipeline Group
-  - [ ] Config listing
+- [x] Pipeline Group
+  - [x] Config listing
 - [ ] Artifacts
   - [ ] Get all Artifacts
   - [ ] Get artifact file
@@ -49,7 +49,7 @@ func main() {
   - [ ] Append to artifact
 - [ ] Pipelines
   - [ ] Get pipeline instance
-  - [ ] Get pipeline status
+  - [x] Get pipeline status
   - [ ] Pause a pipeline
   - [ ] Unpause a pipeline
   - [ ] Releasing a pipeline lock
