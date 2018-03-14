@@ -81,7 +81,7 @@ type Stage struct {
 	Jobs []struct {
 		Name                 string        `json:"name"`
 		RunInstanceCount     interface{}   `json:"run_instance_count"`
-		Timeout              string        `json:"timeout"`
+		Timeout              interface{}   `json:"timeout"`
 		EnvironmentVariables []interface{} `json:"environment_variables"`
 		Resources            []interface{} `json:"resources"`
 		Tasks []struct {
