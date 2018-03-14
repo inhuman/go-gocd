@@ -153,9 +153,12 @@ func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*Create
 	fmt.Println(string(body))
 
 	if response.StatusCode != 200 {
-		jsonErr := json.Unmarshal([]byte(body), &responseErr)
-		if jsonErr != nil {
-			multiError = multierror.Append(multiError, jsonErr)
+		err := json.Unmarshal([]byte(body), &responseErr)
+		if err != nil {
+
+			fmt.Println(responseErr["message"])
+
+			multiError = multierror.Append(multiError, err)
 			multiError = multierror.Append(multiError, errors.New(responseErr["message"]))
 			return nil, multiError.ErrorOrNil()
 		}
