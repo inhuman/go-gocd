@@ -77,7 +77,8 @@ func main() {
 - [ ] Pipeline Config
   - [ ] Get pipeline Configuration
   - [ ] Edit Pipeline configuration
-  - [ ] Create Pipeline
+  - [x] Create Pipeline
+  - [ ] Delete Pipeline
 - [ ] Environment Config
   - [x] Get all environments
   - [x] Get environment config
