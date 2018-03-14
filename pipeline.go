@@ -81,7 +81,7 @@ type Stage struct {
 	Jobs []struct {
 		Name                 string        `json:"name"`
 		RunInstanceCount     interface{}   `json:"run_instance_count"`
-		Timeout              int           `json:"timeout"`
+		Timeout              string        `json:"timeout"`
 		EnvironmentVariables []interface{} `json:"environment_variables"`
 		Resources            []interface{} `json:"resources"`
 		Tasks []struct {
@@ -113,7 +113,6 @@ type Material struct {
 type ApiErrorResponse struct {
 	Message string `json:"message"`
 }
-
 
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, error) {
 	var multiError *multierror.Error

@@ -6,12 +6,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCreatePipelineSuccess(t *testing.T) {
+	t.Parallel()
+	client, server := newTestAPIClient("/go/api/admin/pipelines",
+		serveFileAsJSONStatusCode(t,
+			"POST",
+			"test-fixtures/pipelines/create_pipeline_success.json",
+			4,
+			DummyRequestBodyValidator,
+			http.StatusOK))
+
+	defer server.Close()
+
+	_, err := client.CreatePipeline(CreatePipelineData{})
+	assert.NoError(t, err)
+}
+
+
 func TestCreatePipelineAlreadyExists(t *testing.T) {
 	t.Parallel()
 	client, server := newTestAPIClient("/go/api/admin/pipelines",
 		serveFileAsJSONStatusCode(t,
 			"POST",
-			"test-fixtures/create_pipeline_already_exists.json",
+			"test-fixtures/pipelines/create_pipeline_already_exists.json",
 			4,
 			DummyRequestBodyValidator,
 			http.StatusUnprocessableEntity))
