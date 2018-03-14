@@ -26,6 +26,28 @@ func newTestAPIClient(route string, handler func(http.ResponseWriter, *http.Requ
 
 func serveFileAsJSON(t *testing.T, method string, filepath string, apiVersion int, requestBodyValidator func(string) error) func(http.ResponseWriter, *http.Request) {
 	return func(writer http.ResponseWriter, request *http.Request) {
+
+		if apiVersion > 0 {
+			AcceptHeaderCheck(t, apiVersion, request)
+		}
+
+		BasicAuthCheck(t, request)
+		RequestMethodCheck(t, request, method)
+		RequestBodyCheck(t, request, requestBodyValidator)
+
+		contents, err := ioutil.ReadFile(filepath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if apiVersion > 0 {
+			writer.Header().Add("Content-Type", fmt.Sprintf("application/vnd.go.cd.v%d+json; charset=utf-8", apiVersion))
+		}
+		writer.Write(contents)
+	}
+}
+
+func serveFileAsJSONStatusCode(t *testing.T, method string, filepath string, apiVersion int, requestBodyValidator func(string) error, statusCode int) func(http.ResponseWriter, *http.Request) {
+	return func(writer http.ResponseWriter, request *http.Request) {
 		// log.Println("Doing AcceptHeaderCheck")
 		if apiVersion > 0 {
 			AcceptHeaderCheck(t, apiVersion, request)
@@ -44,7 +66,9 @@ func serveFileAsJSON(t *testing.T, method string, filepath string, apiVersion in
 		if apiVersion > 0 {
 			writer.Header().Add("Content-Type", fmt.Sprintf("application/vnd.go.cd.v%d+json; charset=utf-8", apiVersion))
 		}
+		writer.WriteHeader(statusCode)
 		writer.Write(contents)
+
 	}
 }
 

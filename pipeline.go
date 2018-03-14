@@ -110,6 +110,11 @@ type Material struct {
 	} `json:"attributes"`
 }
 
+type ApiErrorResponse struct {
+	Message string `json:"message"`
+}
+
+
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, error) {
 	var multiError *multierror.Error
 
@@ -147,18 +152,18 @@ func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*Create
 		return nil, multiError.ErrorOrNil()
 	}
 
-	var responseErr map[string]string
+	var responseErr ApiErrorResponse
 
 	if response.StatusCode != 200 {
+
 		err := json.Unmarshal([]byte(body), &responseErr)
 		if err != nil {
-
-			fmt.Println(responseErr["message"])
-
 			multiError = multierror.Append(multiError, err)
-			multiError = multierror.Append(multiError, errors.New(responseErr["message"]))
 			return nil, multiError.ErrorOrNil()
 		}
+
+		multiError = multierror.Append(multiError, errors.New(responseErr.Message))
+		return nil, multiError.ErrorOrNil()
 	}
 
 	var resp CreatePipelineResponse
