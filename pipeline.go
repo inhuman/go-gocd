@@ -150,6 +150,8 @@ func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*Create
 	jsonErr := json.Unmarshal([]byte(body), &resp)
 	if jsonErr != nil {
 		errors = multierror.Append(errors, jsonErr)
-		return &resp, errors.ErrorOrNil()
+		return nil, errors.ErrorOrNil()
 	}
+
+	return &resp, nil
 }
