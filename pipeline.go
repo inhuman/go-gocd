@@ -149,6 +149,9 @@ func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*Create
 
 	var responseErr map[string]string
 
+	fmt.Println(response.StatusCode)
+	fmt.Println(string(body))
+
 	if response.StatusCode != 200 {
 		jsonErr := json.Unmarshal([]byte(body), &responseErr)
 		if jsonErr != nil {
