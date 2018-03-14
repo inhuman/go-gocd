@@ -16,6 +16,7 @@ type Client interface {
 
 	// Pipeline API
 	GetPipelineStatus(pipelineName string) (*PipelineStatus, error)
+	CreatePipeline(pipelineData CreatePipelineData) (*CreatePipelineResponse, error)
 
 	// Jobs API
 	GetScheduledJobs() ([]*ScheduledJob, error)
