@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"fmt"
+	"github.com/pkg/errors"
 )
 
 type PipelineStatus struct {
@@ -133,24 +134,36 @@ func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus,
 }
 
 func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*CreatePipelineResponse, error) {
-	var errors *multierror.Error
+	var multiError *multierror.Error
 
-	_, body, errs := c.Request.
+	response, body, errs := c.Request.
 		Post(c.resolve("/go/api/admin/pipelines")).
 		Set("Accept", "application/vnd.go.cd.v"+strconv.Itoa(ApiVersion)+"+json").
 		SendStruct(pipelineData).
 		End()
-	multierror.Append(errors, errs...)
+
+	multierror.Append(multiError, errs...)
 	if errs != nil {
-		return nil, errors.ErrorOrNil()
+		return nil, multiError.ErrorOrNil()
+	}
+
+	var responseErr map[string]string
+
+	if response.StatusCode != 200 {
+		jsonErr := json.Unmarshal([]byte(body), &responseErr)
+		if jsonErr != nil {
+			multiError = multierror.Append(multiError, jsonErr)
+			multiError = multierror.Append(multiError, errors.New(responseErr["message"]))
+			return nil, multiError.ErrorOrNil()
+		}
 	}
 
 	var resp CreatePipelineResponse
 
 	jsonErr := json.Unmarshal([]byte(body), &resp)
 	if jsonErr != nil {
-		errors = multierror.Append(errors, jsonErr)
-		return nil, errors.ErrorOrNil()
+		multiError = multierror.Append(multiError, jsonErr)
+		return nil, multiError.ErrorOrNil()
 	}
 
 	return &resp, nil
