@@ -121,7 +121,9 @@ type ApiResponse struct {
 			Errors map[string][]json.RawMessage
 		}
 		EnvironmentVariables []struct {
-			Errors map[string][]json.RawMessage
+			Errors struct {
+				ValueForDisplay map[string][]json.RawMessage
+			}
 		}
 	}
 }
@@ -228,8 +230,8 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*CreatePipe
 
 		// Check environment variables pipeline errors
 		for _, mat := range apiResponse.Data.EnvironmentVariables {
-			if len(mat.Errors) > 0 {
-				for fieldName, respErrArr := range mat.Errors {
+			if len(mat.Errors.ValueForDisplay) > 0 {
+				for fieldName, respErrArr := range mat.Errors.ValueForDisplay {
 					for _, respErr := range respErrArr {
 						multiError = multierror.Append(
 							multiError, errors.New("[EnvironmentVariables]["+fieldName+"] "+string(respErr)))
