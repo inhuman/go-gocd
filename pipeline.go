@@ -112,7 +112,11 @@ type Material struct {
 
 type ApiErrorResponse struct {
 	Message string `json:"message"`
+	Data struct{
+		Errors  map[string][]json.RawMessage
+	}
 }
+
 
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, error) {
 	var multiError *multierror.Error
@@ -162,6 +166,17 @@ func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*Create
 		}
 
 		multiError = multierror.Append(multiError, errors.New(responseErr.Message))
+
+		if len(responseErr.Data.Errors) > 0 {
+
+			for fieldName, respErrArr := range responseErr.Data.Errors {
+
+				for _, respErr := range respErrArr {
+					multiError = multierror.Append(multiError, errors.New("[" + fieldName + "] " + string(respErr)))
+				}
+			}
+		}
+
 		return nil, multiError.ErrorOrNil()
 	}
 
