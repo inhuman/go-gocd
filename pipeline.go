@@ -164,6 +164,10 @@ func (c *DefaultClient) DeletePipeline(pipelineName string) error {
 		return multiError.ErrorOrNil()
 	}
 
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
+
 	fmt.Println(apiResponse.Message)
 
 	return multiError.ErrorOrNil()
