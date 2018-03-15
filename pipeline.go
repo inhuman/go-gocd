@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"fmt"
 	"github.com/pkg/errors"
+	"os"
 )
 
 type PipelineStatus struct {
@@ -114,6 +115,9 @@ type ApiErrorResponse struct {
 	Message string `json:"message"`
 	Data struct{
 		Errors  map[string][]json.RawMessage
+		Materials []struct{
+			Errors  map[string][]json.RawMessage
+		}
 	}
 }
 
@@ -167,14 +171,30 @@ func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*Create
 
 		multiError = multierror.Append(multiError, errors.New(responseErr.Message))
 
+		// Check common pipeline errors
 		if len(responseErr.Data.Errors) > 0 {
-
 			for fieldName, respErrArr := range responseErr.Data.Errors {
-
 				for _, respErr := range respErrArr {
-					multiError = multierror.Append(multiError, errors.New("[" + fieldName + "] " + string(respErr)))
+					multiError = multierror.Append(
+						multiError, errors.New("[Common][" + fieldName + "] " + string(respErr)))
 				}
 			}
+		}
+
+		// Check common material errors
+		for _, mat := range responseErr.Data.Materials {
+			if len(mat.Errors) > 0 {
+				for fieldName, respErrArr := range mat.Errors {
+					for _, respErr := range respErrArr {
+						multiError = multierror.Append(
+							multiError, errors.New("[Materials][" + fieldName + "] " + string(respErr)))
+					}
+				}
+			}
+		}
+
+		if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+			fmt.Println(string(body))
 		}
 
 		return nil, multiError.ErrorOrNil()
