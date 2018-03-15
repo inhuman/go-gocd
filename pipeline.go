@@ -111,16 +111,15 @@ type Material struct {
 	} `json:"attributes"`
 }
 
-type ApiErrorResponse struct {
+type ApiResponse struct {
 	Message string `json:"message"`
-	Data struct{
-		Errors  map[string][]json.RawMessage
-		Materials []struct{
-			Errors  map[string][]json.RawMessage
+	Data struct {
+		Errors map[string][]json.RawMessage
+		Materials []struct {
+			Errors map[string][]json.RawMessage
 		}
 	}
 }
-
 
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, error) {
 	var multiError *multierror.Error
@@ -145,6 +144,31 @@ func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus,
 	return &PipelineStatus, multiError.ErrorOrNil()
 }
 
+func (c *DefaultClient) DeletePipeline(pipelineName string) error {
+	var multiError *multierror.Error
+
+	_, body, errs := c.Request.
+		Delete(c.resolve(fmt.Sprintf("/go/api/admin/pipelines/%s", pipelineName))).
+		Set("Accept", "application/vnd.go.cd.v"+strconv.Itoa(ApiVersion)+"+json").
+		End()
+
+	if errs != nil {
+		multiError = multierror.Append(multiError, errs...)
+		return multiError.ErrorOrNil()
+	}
+	var apiResponse ApiResponse
+
+	jsonErr := json.Unmarshal([]byte(body), &apiResponse)
+	if jsonErr != nil {
+		multiError = multierror.Append(multiError, jsonErr)
+		return multiError.ErrorOrNil()
+	}
+
+	fmt.Println(apiResponse.Message)
+
+	return multiError.ErrorOrNil()
+}
+
 func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*CreatePipelineResponse, error) {
 	var multiError *multierror.Error
 
@@ -159,35 +183,35 @@ func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*Create
 		return nil, multiError.ErrorOrNil()
 	}
 
-	var responseErr ApiErrorResponse
+	var apiResponse ApiResponse
 
 	if response.StatusCode != 200 {
 
-		err := json.Unmarshal([]byte(body), &responseErr)
+		err := json.Unmarshal([]byte(body), &apiResponse)
 		if err != nil {
 			multiError = multierror.Append(multiError, err)
 			return nil, multiError.ErrorOrNil()
 		}
 
-		multiError = multierror.Append(multiError, errors.New(responseErr.Message))
+		multiError = multierror.Append(multiError, errors.New(apiResponse.Message))
 
 		// Check common pipeline errors
-		if len(responseErr.Data.Errors) > 0 {
-			for fieldName, respErrArr := range responseErr.Data.Errors {
+		if len(apiResponse.Data.Errors) > 0 {
+			for fieldName, respErrArr := range apiResponse.Data.Errors {
 				for _, respErr := range respErrArr {
 					multiError = multierror.Append(
-						multiError, errors.New("[Common][" + fieldName + "] " + string(respErr)))
+						multiError, errors.New("[Common]["+fieldName+"] "+string(respErr)))
 				}
 			}
 		}
 
 		// Check common material errors
-		for _, mat := range responseErr.Data.Materials {
+		for _, mat := range apiResponse.Data.Materials {
 			if len(mat.Errors) > 0 {
 				for fieldName, respErrArr := range mat.Errors {
 					for _, respErr := range respErrArr {
 						multiError = multierror.Append(
-							multiError, errors.New("[Materials][" + fieldName + "] " + string(respErr)))
+							multiError, errors.New("[Materials]["+fieldName+"] "+string(respErr)))
 					}
 				}
 			}
