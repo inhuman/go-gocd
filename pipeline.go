@@ -49,23 +49,23 @@ type CreatePipelineResponse struct {
 		} `json:"_links"`
 		Type string `json:"type"`
 	} `json:"origin"`
-	Parameters           []interface{} `json:"parameters"`
-	EnvironmentVariables []interface{} `json:"environment_variables"`
-	Materials            []Material    `json:"materials"`
-	Stages               []Stage       `json:"stages"`
-	TrackingTool         interface{}   `json:"tracking_tool"`
-	Timer                interface{}   `json:"timer"`
+	Parameters           []interface{}         `json:"parameters"`
+	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
+	Materials            []Material            `json:"materials"`
+	Stages               []Stage               `json:"stages"`
+	TrackingTool         interface{}           `json:"tracking_tool"`
+	Timer                interface{}           `json:"timer"`
 }
 
 type Pipeline struct {
-	LabelTemplate        string      `json:"label_template"`
-	LockBehavior         string      `json:"lock_behavior"`
-	Name                 string      `json:"name"`
-	Template             interface{} `json:"template"`
-	Materials            []Material  `json:"materials"`
-	Stages               []Stage     `json:"stages"`
-	EnvironmentVariables []string    `json:"environment_variables"`
-	TrackingTool		 interface{} `json:"tracking_tool"`
+	LabelTemplate        string                `json:"label_template"`
+	LockBehavior         string                `json:"lock_behavior"`
+	Name                 string                `json:"name"`
+	Template             interface{}           `json:"template"`
+	Materials            []Material            `json:"materials"`
+	Stages               []Stage               `json:"stages"`
+	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
+	TrackingTool         interface{}           `json:"tracking_tool"`
 }
 
 type Stage struct {
@@ -80,13 +80,13 @@ type Stage struct {
 			Users []interface{} `json:"users"`
 		} `json:"authorization"`
 	} `json:"approval"`
-	EnvironmentVariables []interface{} `json:"environment_variables"`
+	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
 	Jobs []struct {
-		Name                 string        `json:"name"`
-		RunInstanceCount     interface{}   `json:"run_instance_count"`
-		Timeout              interface{}   `json:"timeout"`
-		EnvironmentVariables []interface{} `json:"environment_variables"`
-		Resources            []interface{} `json:"resources"`
+		Name                 string                `json:"name"`
+		RunInstanceCount     interface{}           `json:"run_instance_count"`
+		Timeout              interface{}           `json:"timeout"`
+		EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
+		Resources            []interface{}         `json:"resources"`
 		Tasks []struct {
 			Type string `json:"type"`
 			Attributes struct {
