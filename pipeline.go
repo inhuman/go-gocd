@@ -122,7 +122,7 @@ type ApiResponse struct {
 		}
 		EnvironmentVariables []struct {
 			Errors struct {
-				ValueForDisplay map[string][]json.RawMessage
+				ValueForDisplay map[string][]json.RawMessage `json:"valueForDisplay"`
 			}
 		}
 	}
