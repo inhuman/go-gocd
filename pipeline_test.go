@@ -18,7 +18,7 @@ func TestCreatePipelineSuccess(t *testing.T) {
 
 	defer server.Close()
 
-	_, err := client.CreatePipeline(CreatePipelineData{})
+	_, err := client.CreatePipeline(PipelineConfig{})
 	assert.NoError(t, err)
 }
 
@@ -35,6 +35,6 @@ func TestCreatePipelineAlreadyExists(t *testing.T) {
 
 	defer server.Close()
 
-	_, err := client.CreatePipeline(CreatePipelineData{})
+	_, err := client.CreatePipeline(PipelineConfig{})
 	assert.Error(t, err, "Failed to add pipeline. The pipeline 'double_pipeline' already exists.")
 }

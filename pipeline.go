@@ -17,7 +17,7 @@ type PipelineStatus struct {
 	Locked      bool   `json:"locked"`
 }
 
-type CreatePipelineData struct {
+type PipelineConfig struct {
 	Group    string   `json:"group"`
 	Pipeline Pipeline `json:"pipeline"`
 }
@@ -58,12 +58,14 @@ type CreatePipelineResponse struct {
 }
 
 type Pipeline struct {
-	LabelTemplate string      `json:"label_template"`
-	LockBehavior  string      `json:"lock_behavior"`
-	Name          string      `json:"name"`
-	Template      interface{} `json:"template"`
-	Materials     []Material  `json:"materials"`
-	Stages        []Stage     `json:"stages"`
+	LabelTemplate        string      `json:"label_template"`
+	LockBehavior         string      `json:"lock_behavior"`
+	Name                 string      `json:"name"`
+	Template             interface{} `json:"template"`
+	Materials            []Material  `json:"materials"`
+	Stages               []Stage     `json:"stages"`
+	EnvironmentVariables []string    `json:"environment_variables"`
+	TrackingTool		 interface{} `json:"tracking_tool"`
 }
 
 type Stage struct {
@@ -173,7 +175,7 @@ func (c *DefaultClient) DeletePipeline(pipelineName string) error {
 	return multiError.ErrorOrNil()
 }
 
-func (c *DefaultClient) CreatePipeline(pipelineData CreatePipelineData) (*CreatePipelineResponse, error) {
+func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*CreatePipelineResponse, error) {
 	var multiError *multierror.Error
 
 	response, body, errs := c.Request.
