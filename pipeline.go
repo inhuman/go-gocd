@@ -120,6 +120,9 @@ type ApiResponse struct {
 		Materials []struct {
 			Errors map[string][]json.RawMessage
 		}
+		EnvironmentVariables []struct {
+			Errors map[string][]json.RawMessage
+		}
 	}
 }
 
@@ -211,13 +214,25 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*CreatePipe
 			}
 		}
 
-		// Check common material errors
+		// Check material pipeline errors
 		for _, mat := range apiResponse.Data.Materials {
 			if len(mat.Errors) > 0 {
 				for fieldName, respErrArr := range mat.Errors {
 					for _, respErr := range respErrArr {
 						multiError = multierror.Append(
 							multiError, errors.New("[Materials]["+fieldName+"] "+string(respErr)))
+					}
+				}
+			}
+		}
+
+		// Check environment variables pipeline errors
+		for _, mat := range apiResponse.Data.EnvironmentVariables {
+			if len(mat.Errors) > 0 {
+				for fieldName, respErrArr := range mat.Errors {
+					for _, respErr := range respErrArr {
+						multiError = multierror.Append(
+							multiError, errors.New("[EnvironmentVariables]["+fieldName+"] "+string(respErr)))
 					}
 				}
 			}
