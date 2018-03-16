@@ -25,7 +25,6 @@ type Pipeline struct {
 	Stages               []Stage               `json:"stages"`
 	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
 	Origin               Origin                `json:"origin"`
-	Timer                Timer                 `json:"timer,omitempty"`
 	Links                Links                 `json:"_links,omitempty"`
 }
 
