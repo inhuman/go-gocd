@@ -21,7 +21,7 @@ type Pipeline struct {
 	Name                 string                `json:"name"`
 	Template             interface{}           `json:"template"`
 	Parameters           []Parameter           `json:"parameters"`
-	Materials            []Material            `json:"materials"`
+	Materials            []PipelineMaterial    `json:"materials"`
 	Stages               []Stage               `json:"stages"`
 	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
 	Origin               Origin                `json:"origin"`
@@ -38,7 +38,7 @@ type Stage struct {
 	Jobs                  []Job                 `json:"jobs"`
 }
 
-type Material struct {
+type PipelineMaterial struct {
 	Type string `json:"type"`
 	Errors map[string][]json.RawMessage
 	Attributes struct {
@@ -59,7 +59,7 @@ type ApiResponse struct {
 	Message string `json:"message"`
 	Data struct {
 		Errors map[string][]json.RawMessage
-		Materials []Material
+		Materials []PipelineMaterial
 		EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
 	}
 }
@@ -151,4 +151,28 @@ type Links struct {
 	Doc struct {
 		Href string `json:"href"`
 	} `json:"doc"`
+}
+
+type PackageRepository struct {
+	Links Links `json:"_links"`
+	RepoId string `json:"repo_id"`
+	Name string `json:"name"`
+	PluginMetadata PluginMetadata
+	Configuration []struct{
+		Key string `json:"key"`
+		Value string `json:"value,omitempty"`
+		EncryptedValue string `json:"encrypted_value,omitempty"`
+	} `json:"configuration"`
+}
+
+type PluginMetadata struct {
+	Id string `json:"id"`
+	Version string `json:"version"`
+}
+
+type AllPackageRepositories struct {
+	Links Links `json:"_links"`
+	Embedded struct{
+		PackageRepositories []PackageRepository
+	}
 }
