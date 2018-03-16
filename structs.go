@@ -25,7 +25,6 @@ type Pipeline struct {
 	Stages               []Stage               `json:"stages"`
 	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
 	Origin               Origin                `json:"origin"`
-	Timer                Timer                 `json:"timer"`
 	Links                Links                 `json:"_links,omitempty"`
 }
 
@@ -55,7 +54,7 @@ type Material struct {
 	} `json:"attributes"`
 }
 
-//TODO remove this
+
 type ApiResponse struct {
 	Message string `json:"message"`
 	Data struct {
@@ -64,8 +63,6 @@ type ApiResponse struct {
 		EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
 	}
 }
-
-// refactored
 
 type EnvironmentVariable struct {
 	Secure         bool   `json:"secure"`
