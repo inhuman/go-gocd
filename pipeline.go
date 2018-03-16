@@ -122,11 +122,13 @@ type ApiResponse struct {
 		}
 		EnvironmentVariables []struct {
 			Errors struct {
-				ValueForDisplay map[string][]json.RawMessage `json:"valueForDisplay"`
-			}
-		}
+				ValueForDisplay []json.RawMessage `json:"valueForDisplay"`
+			}  `json:"errors,omitempty"`
+		} `json:"environment_variables"`
 	}
 }
+
+
 
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, error) {
 	var multiError *multierror.Error
@@ -231,14 +233,14 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*CreatePipe
 		// Check environment variables pipeline errors
 		for _, mat := range apiResponse.Data.EnvironmentVariables {
 			if len(mat.Errors.ValueForDisplay) > 0 {
-				for fieldName, respErrArr := range mat.Errors.ValueForDisplay {
-					for _, respErr := range respErrArr {
-						multiError = multierror.Append(
-							multiError, errors.New("[EnvironmentVariables]["+fieldName+"] "+string(respErr)))
-					}
+				for _, respErr := range mat.Errors.ValueForDisplay {
+					multiError = multierror.Append(
+						multiError, errors.New("[EnvironmentVariables] "+string(respErr)))
+
 				}
 			}
 		}
+
 
 		if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
 			fmt.Println(string(body))
