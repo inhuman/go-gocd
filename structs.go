@@ -25,6 +25,7 @@ type Pipeline struct {
 	Stages               []Stage               `json:"stages"`
 	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
 	Origin               Origin                `json:"origin"`
+	Timer                Timer                 `json:"timer,omitempty"`
 	Links                Links                 `json:"_links,omitempty"`
 }
 
@@ -46,7 +47,7 @@ type Material struct {
 		URL             string `json:"url"`
 		Branch          string `json:"branch"`
 		Destination     string `json:"destination"`
-		Filter          Filter `json:"filter"`
+		Filter          Filter `json:"filter,omitempty"`
 		InvertFilter    bool   `json:"invert_filter"`
 		AutoUpdate      bool   `json:"auto_update"`
 		SubmoduleFolder string `json:"submodule_folder"`
