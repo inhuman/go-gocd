@@ -1,5 +1,7 @@
 package gocd
 
+import "github.com/hashicorp/go-multierror"
+
 // Client interface that exposes all the API methods supported by the underlying Client
 type Client interface {
 	// Agents API
@@ -16,7 +18,7 @@ type Client interface {
 
 	// Pipeline API
 	GetPipelineStatus(pipelineName string) (*PipelineStatus, error)
-	CreatePipeline(pipelineData PipelineConfig) (*CreatePipelineResponse, error)
+	CreatePipeline(pipelineConfig PipelineConfig) (*ApiResponse, *multierror.Error)
 	DeletePipeline(pipelineName string) error
 
 	// Jobs API

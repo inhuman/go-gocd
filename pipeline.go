@@ -9,126 +9,6 @@ import (
 	"os"
 )
 
-type PipelineStatus struct {
-	PausedCause string `json:"pausedCause"`
-	PausedBy    string `json:"pausedBy"`
-	Paused      bool   `json:"paused"`
-	Schedulable bool   `json:"schedulable"`
-	Locked      bool   `json:"locked"`
-}
-
-type PipelineConfig struct {
-	Group    string   `json:"group"`
-	Pipeline Pipeline `json:"pipeline"`
-}
-
-type CreatePipelineResponse struct {
-	Links struct {
-		Self struct {
-			Href string `json:"href"`
-		} `json:"self"`
-		Doc struct {
-			Href string `json:"href"`
-		} `json:"doc"`
-		Find struct {
-			Href string `json:"href"`
-		} `json:"find"`
-	} `json:"_links"`
-	LabelTemplate string      `json:"label_template"`
-	LockBehavior  string      `json:"lock_behavior"`
-	Name          string      `json:"name"`
-	Template      interface{} `json:"template"`
-	Origin struct {
-		Links struct {
-			Self struct {
-				Href string `json:"href"`
-			} `json:"self"`
-			Doc struct {
-				Href string `json:"href"`
-			} `json:"doc"`
-		} `json:"_links"`
-		Type string `json:"type"`
-	} `json:"origin"`
-	Parameters           []interface{}         `json:"parameters"`
-	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
-	Materials            []Material            `json:"materials"`
-	Stages               []Stage               `json:"stages"`
-	TrackingTool         interface{}           `json:"tracking_tool"`
-	Timer                interface{}           `json:"timer"`
-}
-
-type Pipeline struct {
-	LabelTemplate        string                `json:"label_template"`
-	LockBehavior         string                `json:"lock_behavior"`
-	Name                 string                `json:"name"`
-	Template             interface{}           `json:"template"`
-	Materials            []Material            `json:"materials"`
-	Stages               []Stage               `json:"stages"`
-	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
-	TrackingTool         interface{}           `json:"tracking_tool"`
-}
-
-type Stage struct {
-	Name                  string `json:"name"`
-	FetchMaterials        bool   `json:"fetch_materials"`
-	CleanWorkingDirectory bool   `json:"clean_working_directory"`
-	NeverCleanupArtifacts bool   `json:"never_cleanup_artifacts"`
-	Approval struct {
-		Type string `json:"type"`
-		Authorization struct {
-			Roles []interface{} `json:"roles"`
-			Users []interface{} `json:"users"`
-		} `json:"authorization"`
-	} `json:"approval"`
-	EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
-	Jobs []struct {
-		Name                 string                `json:"name"`
-		RunInstanceCount     interface{}           `json:"run_instance_count"`
-		Timeout              interface{}           `json:"timeout"`
-		EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
-		Resources            []interface{}         `json:"resources"`
-		Tasks []struct {
-			Type string `json:"type"`
-			Attributes struct {
-				RunIf            []string    `json:"run_if"`
-				Command          string      `json:"command"`
-				WorkingDirectory interface{} `json:"working_directory"`
-			} `json:"attributes"`
-		} `json:"tasks"`
-	} `json:"jobs"`
-}
-
-type Material struct {
-	Type string `json:"type"`
-	Attributes struct {
-		URL             string      `json:"url"`
-		Destination     string      `json:"destination"`
-		Filter          interface{} `json:"filter"`
-		InvertFilter    bool        `json:"invert_filter"`
-		Name            interface{} `json:"name"`
-		AutoUpdate      bool        `json:"auto_update"`
-		Branch          string      `json:"branch"`
-		SubmoduleFolder interface{} `json:"submodule_folder"`
-		ShallowClone    bool        `json:"shallow_clone"`
-	} `json:"attributes"`
-}
-
-type ApiResponse struct {
-	Message string `json:"message"`
-	Data struct {
-		Errors map[string][]json.RawMessage
-		Materials []struct {
-			Errors map[string][]json.RawMessage
-		}
-		EnvironmentVariables []struct {
-			Errors struct {
-				ValueForDisplay []json.RawMessage `json:"valueForDisplay"`
-			}  `json:"errors,omitempty"`
-		} `json:"environment_variables"`
-	}
-}
-
-
 
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, error) {
 	var multiError *multierror.Error
@@ -182,7 +62,7 @@ func (c *DefaultClient) DeletePipeline(pipelineName string) error {
 	return multiError.ErrorOrNil()
 }
 
-func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*CreatePipelineResponse, error) {
+func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*ApiResponse, *multierror.Error) {
 	var multiError *multierror.Error
 
 	response, body, errs := c.Request.
@@ -193,7 +73,7 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*CreatePipe
 
 	multierror.Append(multiError, errs...)
 	if errs != nil {
-		return nil, multiError.ErrorOrNil()
+		return nil, multiError
 	}
 
 	var apiResponse ApiResponse
@@ -203,7 +83,7 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*CreatePipe
 		err := json.Unmarshal([]byte(body), &apiResponse)
 		if err != nil {
 			multiError = multierror.Append(multiError, err)
-			return nil, multiError.ErrorOrNil()
+			return nil, multiError
 		}
 
 		multiError = multierror.Append(multiError, errors.New(apiResponse.Message))
@@ -246,15 +126,15 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*CreatePipe
 			fmt.Println(string(body))
 		}
 
-		return nil, multiError.ErrorOrNil()
+		return nil, multiError
 	}
 
-	var resp CreatePipelineResponse
+	var resp ApiResponse
 
 	jsonErr := json.Unmarshal([]byte(body), &resp)
 	if jsonErr != nil {
 		multiError = multierror.Append(multiError, jsonErr)
-		return nil, multiError.ErrorOrNil()
+		return nil, multiError
 	}
 
 	return &resp, nil
