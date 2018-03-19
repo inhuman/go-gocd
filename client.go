@@ -31,7 +31,6 @@ type Client interface {
 
 	// Repositories
 	GetAllRepositories() (*AllPackageRepositories, *multierror.Error)
-	GetRepository() (*PackageRepository, *multierror.Error)
+	GetRepository(id string) (*PackageRepository, *multierror.Error)
 }
 
-//TODO: fix this back

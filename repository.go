@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 )
 
-func (c *DefaultClient) GetAllRepositories(pipelineName string) (*AllPackageRepositories, error) {
+func (c *DefaultClient) GetAllRepositories() (*AllPackageRepositories, *multierror.Error) {
 	var multiError *multierror.Error
 
 	_, body, errs := c.Request.
@@ -17,20 +17,20 @@ func (c *DefaultClient) GetAllRepositories(pipelineName string) (*AllPackageRepo
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
-		return nil, multiError.ErrorOrNil()
+		return nil, multiError
 	}
 	var AllRepositories AllPackageRepositories
 
 	jsonErr := json.Unmarshal([]byte(body), &AllRepositories)
 	if jsonErr != nil {
 		multiError = multierror.Append(multiError, jsonErr)
-		return nil, multiError.ErrorOrNil()
+		return nil, multiError
 	}
 
-	return &AllRepositories, multiError.ErrorOrNil()
+	return &AllRepositories, multiError
 }
 
-func (c *DefaultClient) GetRepository(id string) (*PackageRepository, error) {
+func (c *DefaultClient) GetRepository(id string) (*PackageRepository, *multierror.Error) {
 	var multiError *multierror.Error
 
 	_, body, errs := c.Request.
@@ -41,15 +41,15 @@ func (c *DefaultClient) GetRepository(id string) (*PackageRepository, error) {
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
-		return nil, multiError.ErrorOrNil()
+		return nil, multiError
 	}
 	var PackageRepository PackageRepository
 
 	jsonErr := json.Unmarshal([]byte(body), &PackageRepository)
 	if jsonErr != nil {
 		multiError = multierror.Append(multiError, jsonErr)
-		return nil, multiError.ErrorOrNil()
+		return nil, multiError
 	}
 
-	return &PackageRepository, multiError.ErrorOrNil()
+	return &PackageRepository, multiError
 }

@@ -39,7 +39,7 @@ func TestRepository(t *testing.T) {
 
 	defer server.Close()
 
-	_, err := client.GetRepository()
+	_, err := client.GetRepository("b83e0ac7-889c-4d28-9f9e-c1fdfae3749f")
 
 	var multiError *multierror.Error
 	multiError = nil
