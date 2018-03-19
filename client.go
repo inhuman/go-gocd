@@ -28,4 +28,10 @@ type Client interface {
 	// Environment Config API
 	GetAllEnvironmentConfigs() ([]*EnvironmentConfig, error)
 	GetEnvironmentConfig(name string) (*EnvironmentConfig, error)
+
+	// Repositories
+	GetAllRepositories() (*AllPackageRepositories, *multierror.Error)
+	GetRepository() (*PackageRepository, *multierror.Error)
 }
+
+//TODO: fix this back
