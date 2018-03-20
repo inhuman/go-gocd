@@ -4,7 +4,6 @@ import (
 	"testing"
 	"net/http"
 	"github.com/stretchr/testify/assert"
-	"fmt"
 	"github.com/hashicorp/go-multierror"
 )
 
@@ -57,9 +56,6 @@ func TestCreatePipelineIncorrectMaterial(t *testing.T) {
 	defer server.Close()
 
 	_, multiErr := client.CreatePipeline(PipelineConfig{})
-
-	fmt.Println(multiErr.Errors[0].Error())
-	fmt.Println(multiErr.Errors[2])
 
 	expect1 := "Validations failed for pipeline 'FromTemplate3'. Error(s): [Validation failed.]. Please correct and resubmit."
 	assert.Equal(t, expect1, multiErr.Errors[0].Error())

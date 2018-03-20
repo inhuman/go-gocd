@@ -2,26 +2,34 @@ package gocd
 
 import (
 	"testing"
+	"github.com/hashicorp/go-multierror"
+	"github.com/stretchr/testify/assert"
+	"net/http"
 )
 
 func TestCreatePackageSuccess(t *testing.T) {
-	//t.Parallel()
-	//client, server := newTestAPIClient("/go/api/admin/pipelines",
-	//	serveFileAsJSONStatusCode(t,
-	//		"POST",
-	//		"test-fixtures/pipelines/create_pipeline_success.json",
-	//		4,
-	//		DummyRequestBodyValidator,
-	//		http.StatusOK))
-	//
-	//defer server.Close()
-	//
-	//_, err := client.CreatePipeline(PipelineConfig{})
-	//
-	//var multiError *multierror.Error
-	//multiError = nil
-	//
-	//assert.Equal(t, multiError, err)
+	t.Parallel()
+	client, server := newTestAPIClient("/go/api/admin/packages",
+		serveFileAsJSONStatusCode(t,
+			"POST",
+			"test-fixtures/package/create_package_success.json",
+			1,
+			DummyRequestBodyValidator,
+			http.StatusOK))
+
+	defer server.Close()
+
+	pkg, resp, err := client.CreatePackage(Package{})
+
+	var multiError *multierror.Error
+	multiError = nil
+	assert.Equal(t, multiError, err)
+
+	var apiResp *ApiResponse
+	apiResp = nil
+	assert.Equal(t, apiResp, resp)
+
+	assert.Equal(t, "package_name_4", pkg.Name)
 }
 
 func TestCreatePackageAlreadyExists(t *testing.T) {
