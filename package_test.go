@@ -1,4 +1,4 @@
-package gocd
+package go_gocd
 
 import (
 	"testing"
@@ -14,7 +14,7 @@ func TestCreatePackageSuccess(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/packages",
 		serveFileAsJSONStatusCode(t,
 			"POST",
-			"../test-fixtures/package/create_package_success.json",
+			"test-fixtures/package/create_package_success.json",
 			1,
 			DummyRequestBodyValidator,
 			http.StatusOK))
@@ -40,7 +40,7 @@ func TestCreatePackageAlreadyExists(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/packages",
 		serveFileAsJSONStatusCode(t,
 			"POST",
-			"../test-fixtures/package/create_package_already_exists.json",
+			"test-fixtures/package/create_package_already_exists.json",
 			1,
 			DummyRequestBodyValidator,
 			http.StatusUnprocessableEntity))
@@ -68,7 +68,7 @@ func TestCreatePackageWrongSpec(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/packages",
 		serveFileAsJSONStatusCode(t,
 			"POST",
-			"../test-fixtures/package/create_package_wrong_spec.json",
+			"test-fixtures/package/create_package_wrong_spec.json",
 			1,
 			DummyRequestBodyValidator,
 			http.StatusUnprocessableEntity))
@@ -96,7 +96,7 @@ func TestDeletePackageSuccess(t *testing.T) {
 	client, server := newTestAPIClient(fmt.Sprintf("/go/api/admin/packages/%s", "package-id-sdf"),
 		serveFileAsJSONStatusCode(t,
 			"DELETE",
-			"../test-fixtures/package/delete_package_success.json",
+			"test-fixtures/package/delete_package_success.json",
 			1,
 			DummyRequestBodyValidator,
 			http.StatusOK))
@@ -118,7 +118,7 @@ func TestDeletePackageNotExists(t *testing.T) {
 	client, server := newTestAPIClient(fmt.Sprintf("/go/api/admin/packages/%s", "package-id-sdf"),
 		serveFileAsJSONStatusCode(t,
 			"DELETE",
-			"../test-fixtures/package/delete_package_non_exists.json",
+			"test-fixtures/package/delete_package_non_exists.json",
 			1,
 			DummyRequestBodyValidator,
 			http.StatusOK))
@@ -140,7 +140,7 @@ func TestDeletePackageAssociatedWithPipeline(t *testing.T) {
 	client, server := newTestAPIClient(fmt.Sprintf("/go/api/admin/packages/%s", "package-id-sdf"),
 		serveFileAsJSONStatusCode(t,
 			"DELETE",
-			"../test-fixtures/package/delete_package_associated_with_pipeline.json",
+			"test-fixtures/package/delete_package_associated_with_pipeline.json",
 			1,
 			DummyRequestBodyValidator,
 			http.StatusOK))

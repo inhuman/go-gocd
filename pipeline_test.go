@@ -1,4 +1,4 @@
-package gocd
+package go_gocd
 
 import (
 	"testing"
@@ -12,7 +12,7 @@ func TestCreatePipelineSuccess(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/pipelines",
 		serveFileAsJSONStatusCode(t,
 			"POST",
-			"../test-fixtures/pipelines/create_pipeline_success.json",
+			"test-fixtures/pipelines/create_pipeline_success.json",
 			4,
 			DummyRequestBodyValidator,
 			http.StatusOK))
@@ -32,7 +32,7 @@ func TestCreatePipelineAlreadyExists(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/pipelines",
 		serveFileAsJSONStatusCode(t,
 			"POST",
-			"../test-fixtures/pipelines/create_pipeline_already_exists.json",
+			"test-fixtures/pipelines/create_pipeline_already_exists.json",
 			4,
 			DummyRequestBodyValidator,
 			http.StatusUnprocessableEntity))
@@ -48,7 +48,7 @@ func TestCreatePipelineIncorrectMaterial(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/pipelines",
 		serveFileAsJSONStatusCode(t,
 			"POST",
-			"../test-fixtures/pipelines/create_pipeline_incorrect_material.json",
+			"test-fixtures/pipelines/create_pipeline_incorrect_material.json",
 			4,
 			DummyRequestBodyValidator,
 			http.StatusUnprocessableEntity))

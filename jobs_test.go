@@ -1,4 +1,4 @@
-package gocd
+package go_gocd
 
 import (
 	"testing"
@@ -11,7 +11,7 @@ func TestGetScheduledJobs(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/jobs/scheduled.xml",
 		serveFileAsXML(t,
 			"GET",
-			"../test-fixtures/job/get_scheduled_jobs.xml"))
+			"test-fixtures/job/get_scheduled_jobs.xml"))
 	defer server.Close()
 	jobs, err := client.GetScheduledJobs()
 	if err != nil {
@@ -41,7 +41,7 @@ func TestGetJobHistory(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/jobs/pipeline/stage/job/history/0",
 		serveFileAsJSON(t,
 			"GET",
-			"../test-fixtures/job/get_job_history.json",
+			"test-fixtures/job/get_job_history.json",
 			ApiVersion,
 			DummyRequestBodyValidator))
 	defer server.Close()

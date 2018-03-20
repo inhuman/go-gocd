@@ -1,4 +1,4 @@
-package gocd
+package go_gocd
 
 import (
 	"github.com/hashicorp/go-multierror"
@@ -12,7 +12,7 @@ func TestGetAllRepositories(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/repositories",
 		serveFileAsJSONStatusCode(t,
 			"GET",
-			"../test-fixtures/repository/get_all_repositories_success.json",
+			"test-fixtures/repository/get_all_repositories_success.json",
 			1,
 			DummyRequestBodyValidator,
 			http.StatusOK))
@@ -32,7 +32,7 @@ func TestRepository(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/repositories/b83e0ac7-889c-4d28-9f9e-c1fdfae3749f",
 		serveFileAsJSONStatusCode(t,
 			"GET",
-			"../test-fixtures/repository/get_repository.json",
+			"test-fixtures/repository/get_repository.json",
 			1,
 			DummyRequestBodyValidator,
 			http.StatusOK))

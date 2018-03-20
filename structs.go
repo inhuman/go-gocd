@@ -1,4 +1,4 @@
-package gocd
+package go_gocd
 
 import "encoding/json"
 
