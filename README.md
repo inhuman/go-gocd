@@ -4,7 +4,7 @@ Go Lang library to access [GoCD API](https://api.go.cd/current/).
 
 ## Usage
 ```go
-package main
+package go_gocd
 
 import (
   "github.com/ashwanthkumar/go-gocd"
