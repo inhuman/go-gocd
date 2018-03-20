@@ -33,28 +33,39 @@ func TestCreatePackageSuccess(t *testing.T) {
 }
 
 func TestCreatePackageAlreadyExists(t *testing.T) {
-	//t.Parallel()
-	//client, server := newTestAPIClient("/go/api/admin/pipelines",
-	//	serveFileAsJSONStatusCode(t,
-	//		"POST",
-	//		"test-fixtures/pipelines/create_pipeline_already_exists.json",
-	//		4,
-	//		DummyRequestBodyValidator,
-	//		http.StatusUnprocessableEntity))
-	//
-	//defer server.Close()
-	//
-	//_, err := client.CreatePipeline(PipelineConfig{})
-	//assert.Error(t, err, "Failed to add pipeline. The pipeline 'double_pipeline' already exists.")
+	t.Parallel()
+	client, server := newTestAPIClient("/go/api/admin/packages",
+		serveFileAsJSONStatusCode(t,
+			"POST",
+			"test-fixtures/package/create_package_already_exists.json",
+			1,
+			DummyRequestBodyValidator,
+			http.StatusUnprocessableEntity))
+
+	defer server.Close()
+
+	pkg, resp, err := client.CreatePackage(Package{})
+
+	var multiError *multierror.Error
+	multiError = nil
+	assert.Equal(t, multiError, err)
+
+	var pkgNil *Package
+	pkgNil = nil
+	assert.Equal(t, pkgNil, pkg)
+
+	assert.Equal(t, "Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", resp.Message)
+	assert.Equal(t, "\"Cannot save package or repo, found duplicate packages. [Repo Name: 'artifactory-rpm', Package Name: 'package_name_2'], [Repo Name: 'artifactory-rpm', Package Name: 'package_name_']\"", string(resp.Data.Errors["id"][0]))
+
 }
 
 func TestCreatePackageFail(t *testing.T) {
 	//t.Parallel()
-	//client, server := newTestAPIClient("/go/api/admin/pipelines",
+	//client, server := newTestAPIClient("/go/api/admin/packages",
 	//	serveFileAsJSONStatusCode(t,
 	//		"POST",
 	//		"test-fixtures/pipelines/create_pipeline_incorrect_material.json",
-	//		4,
+	//		1,
 	//		DummyRequestBodyValidator,
 	//		http.StatusUnprocessableEntity))
 	//

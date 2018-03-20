@@ -25,17 +25,17 @@ func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *mul
 
 	jsonErr := json.Unmarshal([]byte(body), &Package)
 	if jsonErr != nil {
-		//multiError = multierror.Append(multiError, jsonErr)
+		multiError = multierror.Append(multiError, jsonErr)
+	}
 
+	if Package.Name == "" {
 		var resp ApiResponse
 		jsonErr := json.Unmarshal([]byte(body), &resp)
 		if jsonErr != nil {
 			multiError = multierror.Append(multiError, jsonErr)
-		} else {
-			return nil, &resp, multiError
 		}
+		return nil, &resp, multiError
 
-		return nil, nil, multiError
 	} else {
 		return &Package, nil, multiError
 	}
