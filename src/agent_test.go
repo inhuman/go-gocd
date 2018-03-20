@@ -12,7 +12,7 @@ func TestGetAllAgents(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/agents",
 		serveFileAsJSON(t,
 			"GET",
-			"../test-fixtures/get_all_agents.json",
+			"../test-fixtures/agent/get_all_agents.json",
 			ApiVersion, DummyRequestBodyValidator))
 	defer server.Close()
 	agents, err := client.GetAllAgents()
@@ -38,7 +38,7 @@ func TestGetAgent(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/agents/uuid",
 		serveFileAsJSON(t,
 			"GET",
-			"../test-fixtures/get_agent.json",
+			"../test-fixtures/agent/get_agent.json",
 			ApiVersion,
 			DummyRequestBodyValidator))
 	defer server.Close()
@@ -70,7 +70,7 @@ func TestUpdateAgent(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/agents/uuid",
 		serveFileAsJSON(t,
 			"PATCH",
-			"../test-fixtures/patch_agent.json",
+			"../test-fixtures/agent/patch_agent.json",
 			ApiVersion,
 			requestBodyValidator))
 	defer server.Close()
@@ -88,7 +88,7 @@ func TestDeleteAgent(t *testing.T) {
 
 	client, server := newTestAPIClient("/go/api/agents/uuid",
 		serveFileAsJSON(t, "DELETE",
-			"../test-fixtures/delete_agent.json",
+			"../test-fixtures/agent/delete_agent.json",
 			ApiVersion,
 			DummyRequestBodyValidator))
 	defer server.Close()
@@ -102,7 +102,7 @@ func TestAgentRunHistory(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/agents/uuid/job_run_history/0",
 		serveFileAsJSON(t,
 			"GET",
-			"../test-fixtures/get_agent_run_history.json",
+			"../test-fixtures/agent/get_agent_run_history.json",
 			ApiVersion,
 			DummyRequestBodyValidator))
 	defer server.Close()

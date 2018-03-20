@@ -11,7 +11,7 @@ func TestGetAllEnvironments(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/environments",
 		serveFileAsJSON(t,
 			"GET",
-			"../test-fixtures/get_all_environment_configs.json",
+			"../test-fixtures/environment/get_all_environment_configs.json",
 			ApiVersion,
 			DummyRequestBodyValidator))
 	defer server.Close()
@@ -44,7 +44,7 @@ func TestGetEnvironment(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/admin/environments/my_environment",
 		serveFileAsJSON(t,
 			"GET",
-			"../test-fixtures/get_environment_config.json",
+			"../test-fixtures/environment/get_environment_config.json",
 			ApiVersion,
 			DummyRequestBodyValidator))
 	defer server.Close()
