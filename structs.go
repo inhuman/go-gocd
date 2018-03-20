@@ -39,13 +39,13 @@ type Stage struct {
 }
 
 type PipelineMaterial struct {
-	Type string `json:"type"`
+	Type   string `json:"type"`
 	Errors map[string][]json.RawMessage
 	Attributes struct {
-		Name            string `json:"name"`
-		URL             string `json:"url"`
-		Branch          string `json:"branch"`
-		Destination     string `json:"destination"`
+		Name        string `json:"name"`
+		URL         string `json:"url"`
+		Branch      string `json:"branch"`
+		Destination string `json:"destination"`
 		//Filter          Filter `json:"filter,omitempty"`
 		InvertFilter    bool   `json:"invert_filter"`
 		AutoUpdate      bool   `json:"auto_update"`
@@ -54,12 +54,11 @@ type PipelineMaterial struct {
 	} `json:"attributes"`
 }
 
-
 type ApiResponse struct {
 	Message string `json:"message"`
 	Data struct {
-		Errors map[string][]json.RawMessage
-		Materials []PipelineMaterial
+		Errors               map[string][]json.RawMessage
+		Materials            []PipelineMaterial
 		EnvironmentVariables []EnvironmentVariable `json:"environment_variables"`
 	}
 }
@@ -73,7 +72,6 @@ type EnvironmentVariable struct {
 		ValueForDisplay []json.RawMessage `json:"valueForDisplay"`
 	} `json:"errors,omitempty"`
 }
-
 
 type Job struct {
 	Name                 string                `json:"name"`
@@ -103,7 +101,7 @@ type Task struct {
 		RunIf            []string `json:"run_if"`
 		Command          string   `json:"command"`
 		WorkingDirectory string   `json:"working_directory"`
-		OnCancel         *Task     `json:"on_cancel"`
+		OnCancel         *Task    `json:"on_cancel"`
 	} `json:"attributes"`
 }
 
@@ -154,25 +152,35 @@ type Links struct {
 }
 
 type PackageRepository struct {
-	Links Links `json:"_links"`
-	RepoId string `json:"repo_id"`
-	Name string `json:"name"`
-	PluginMetadata PluginMetadata
-	Configuration []struct{
-		Key string `json:"key"`
-		Value string `json:"value,omitempty"`
-		EncryptedValue string `json:"encrypted_value,omitempty"`
-	} `json:"configuration"`
+	Links          Links          `json:"_links,omitempty"`
+	RepoId         string         `json:"repo_id"`
+	Name           string         `json:"name"`
+	PluginMetadata PluginMetadata `json:"plugin_metadata,omitempty"`
+	Configuration  Configuration  `json:"configuration,omitempty"`
+}
+
+type Configuration []struct {
+	Key            string `json:"key"`
+	Value          string `json:"value,omitempty"`
+	EncryptedValue string `json:"encrypted_value,omitempty"`
 }
 
 type PluginMetadata struct {
-	Id string `json:"id"`
+	Id      string `json:"id"`
 	Version string `json:"version"`
 }
 
 type AllPackageRepositories struct {
 	Links Links `json:"_links"`
-	Embedded struct{
+	Embedded struct {
 		PackageRepositories []PackageRepository
 	}
+}
+
+type Package struct {
+	Name        string `json:"name"`
+	Id          string `json:"id"`
+	AutoUpdate  bool   `json:"auto_update"`
+	PackageRepo PackageRepository `json:"package_repo"`
+	Configuration Configuration `json:"configuration"`
 }
