@@ -5,10 +5,12 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/stretchr/testify/assert"
 	"net/http"
+	"fmt"
 )
 
 func TestCreatePackageSuccess(t *testing.T) {
 	t.Parallel()
+
 	client, server := newTestAPIClient("/go/api/admin/packages",
 		serveFileAsJSONStatusCode(t,
 			"POST",
@@ -34,6 +36,7 @@ func TestCreatePackageSuccess(t *testing.T) {
 
 func TestCreatePackageAlreadyExists(t *testing.T) {
 	t.Parallel()
+
 	client, server := newTestAPIClient("/go/api/admin/packages",
 		serveFileAsJSONStatusCode(t,
 			"POST",
@@ -61,6 +64,7 @@ func TestCreatePackageAlreadyExists(t *testing.T) {
 
 func TestCreatePackageWrongSpec(t *testing.T) {
 	t.Parallel()
+
 	client, server := newTestAPIClient("/go/api/admin/packages",
 		serveFileAsJSONStatusCode(t,
 			"POST",
@@ -84,5 +88,70 @@ func TestCreatePackageWrongSpec(t *testing.T) {
 	assert.Equal(t, "Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", resp.Message)
 	assert.Equal(t, "\"Unsupported key(s) found : PACKAGE_ENV. Allowed key(s) are : PACKAGE_SPEC\"", string(resp.Data.Errors["configuration"][0]))
 	assert.Equal(t, "\"Package spec not specified\"", string(resp.Data.Errors["PACKAGE_SPEC"][0]))
+}
 
+func TestDeletePackageSuccess(t *testing.T) {
+	t.Parallel()
+
+	client, server := newTestAPIClient(fmt.Sprintf("/go/api/admin/packages/%s", "package-id-sdf"),
+		serveFileAsJSONStatusCode(t,
+			"DELETE",
+			"../test-fixtures/package/delete_package_success.json",
+			1,
+			DummyRequestBodyValidator,
+			http.StatusOK))
+
+	defer server.Close()
+
+	resp, err := client.DeletePackage("package-id-sdf")
+
+	var multiError *multierror.Error
+	multiError = nil
+	assert.Equal(t, multiError, err)
+
+	assert.Equal(t, "The package definition 'package-id-sdf' was deleted successfully.", resp.Message)
+}
+
+func TestDeletePackageNotExists(t *testing.T) {
+	t.Parallel()
+
+	client, server := newTestAPIClient(fmt.Sprintf("/go/api/admin/packages/%s", "package-id-sdf"),
+		serveFileAsJSONStatusCode(t,
+			"DELETE",
+			"../test-fixtures/package/delete_package_non_exists.json",
+			1,
+			DummyRequestBodyValidator,
+			http.StatusOK))
+
+	defer server.Close()
+
+	resp, err := client.DeletePackage("package-id-sdf")
+
+	var multiError *multierror.Error
+	multiError = nil
+	assert.Equal(t, multiError, err)
+
+	assert.Equal(t, "Either the resource you requested was not found, or you are not authorized to perform this action.", resp.Message)
+}
+
+func TestDeletePackageAssociatedWithPipeline(t *testing.T) {
+	t.Parallel()
+
+	client, server := newTestAPIClient(fmt.Sprintf("/go/api/admin/packages/%s", "package-id-sdf"),
+		serveFileAsJSONStatusCode(t,
+			"DELETE",
+			"../test-fixtures/package/delete_package_associated_with_pipeline.json",
+			1,
+			DummyRequestBodyValidator,
+			http.StatusOK))
+
+	defer server.Close()
+
+	resp, err := client.DeletePackage("package-id-sdf")
+
+	var multiError *multierror.Error
+	multiError = nil
+	assert.Equal(t, multiError, err)
+
+	assert.Equal(t, "Cannot delete the package definition 'package-id-sdf' as it is used by pipeline(s): '[fromtemplate]'", resp.Message)
 }
