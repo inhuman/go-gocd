@@ -18,9 +18,9 @@ type Client interface {
 	GetPipelineGroups() ([]*PipelineGroup, error)
 
 	// Pipeline
-	GetPipelineStatus(pipelineName string) (*PipelineStatus, error)
+	GetPipelineStatus(pipelineName string) (*PipelineStatus, *multierror.Error)
 	CreatePipeline(pipelineConfig PipelineConfig) (*ApiResponse, *multierror.Error)
-	DeletePipeline(pipelineName string) error
+	DeletePipeline(pipelineName string) (*ApiResponse, *multierror.Error)
 
 	// Jobs
 	GetScheduledJobs() ([]*ScheduledJob, error)

@@ -10,7 +10,7 @@ import (
 )
 
 
-func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, error) {
+func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, *multierror.Error) {
 	var multiError *multierror.Error
 
 	_, body, errs := c.Request.
@@ -20,20 +20,20 @@ func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus,
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
-		return nil, multiError.ErrorOrNil()
+		return nil, multiError
 	}
 	var PipelineStatus PipelineStatus
 
 	jsonErr := json.Unmarshal([]byte(body), &PipelineStatus)
 	if jsonErr != nil {
 		multiError = multierror.Append(multiError, jsonErr)
-		return nil, multiError.ErrorOrNil()
+		return nil, multiError
 	}
 
-	return &PipelineStatus, multiError.ErrorOrNil()
+	return &PipelineStatus, multiError
 }
 
-func (c *DefaultClient) DeletePipeline(pipelineName string) error {
+func (c *DefaultClient) DeletePipeline(pipelineName string) (*ApiResponse, *multierror.Error) {
 	var multiError *multierror.Error
 
 	_, body, errs := c.Request.
@@ -43,23 +43,21 @@ func (c *DefaultClient) DeletePipeline(pipelineName string) error {
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
-		return multiError.ErrorOrNil()
+		return nil, multiError
 	}
 	var apiResponse ApiResponse
 
 	jsonErr := json.Unmarshal([]byte(body), &apiResponse)
 	if jsonErr != nil {
 		multiError = multierror.Append(multiError, jsonErr)
-		return multiError.ErrorOrNil()
+		return nil, multiError
 	}
 
 	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
 		fmt.Println(string(body))
 	}
 
-	fmt.Println(apiResponse.Message)
-
-	return multiError.ErrorOrNil()
+	return &apiResponse, multiError
 }
 
 func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*ApiResponse, *multierror.Error) {
