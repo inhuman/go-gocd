@@ -1,4 +1,4 @@
-package gocd
+package src
 
 import (
 	"testing"
@@ -8,7 +8,10 @@ import (
 
 func TestGetScheduledJobs(t *testing.T) {
 	t.Parallel()
-	client, server := newTestAPIClient("/go/api/jobs/scheduled.xml", serveFileAsXML(t, "GET", "test-fixtures/get_scheduled_jobs.xml"))
+	client, server := newTestAPIClient("/go/api/jobs/scheduled.xml",
+		serveFileAsXML(t,
+			"GET",
+			"../test-fixtures/get_scheduled_jobs.xml"))
 	defer server.Close()
 	jobs, err := client.GetScheduledJobs()
 	if err != nil {
@@ -35,7 +38,12 @@ func TestGetScheduledJobs(t *testing.T) {
 
 func TestGetJobHistory(t *testing.T) {
 	t.Parallel()
-	client, server := newTestAPIClient("/go/api/jobs/pipeline/stage/job/history/0", serveFileAsJSON(t, "GET", "test-fixtures/get_job_history.json", ApiVersion, DummyRequestBodyValidator))
+	client, server := newTestAPIClient("/go/api/jobs/pipeline/stage/job/history/0",
+		serveFileAsJSON(t,
+			"GET",
+			"../test-fixtures/get_job_history.json",
+			ApiVersion,
+			DummyRequestBodyValidator))
 	defer server.Close()
 	jobs, err := client.GetJobHistory("pipeline", "stage", "job", 0)
 	assert.NoError(t, err)

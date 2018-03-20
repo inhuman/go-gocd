@@ -1,4 +1,4 @@
-package gocd
+package src
 
 import (
 	"testing"
@@ -8,7 +8,12 @@ import (
 
 func TestGetPipelineGroups(t *testing.T) {
 	t.Parallel()
-	client, server := newTestAPIClient("/go/api/config/pipeline_groups", serveFileAsJSON(t, "GET", "test-fixtures/get_pipeline_groups.json", 0, DummyRequestBodyValidator))
+	client, server := newTestAPIClient("/go/api/config/pipeline_groups",
+		serveFileAsJSON(t,
+			"GET",
+			"../test-fixtures/get_pipeline_groups.json",
+			0,
+			DummyRequestBodyValidator))
 	defer server.Close()
 	pipelineGroups, err := client.GetPipelineGroups()
 	assert.NoError(t, err)

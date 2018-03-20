@@ -1,4 +1,4 @@
-package gocd
+package src
 
 import (
 	"testing"
@@ -8,7 +8,12 @@ import (
 
 func TestGetAllEnvironments(t *testing.T) {
 	t.Parallel()
-	client, server := newTestAPIClient("/go/api/admin/environments", serveFileAsJSON(t, "GET", "test-fixtures/get_all_environment_configs.json", ApiVersion, DummyRequestBodyValidator))
+	client, server := newTestAPIClient("/go/api/admin/environments",
+		serveFileAsJSON(t,
+			"GET",
+			"../test-fixtures/get_all_environment_configs.json",
+			ApiVersion,
+			DummyRequestBodyValidator))
 	defer server.Close()
 	envs, err := client.GetAllEnvironmentConfigs()
 	assert.NoError(t, err)
@@ -36,7 +41,12 @@ func TestGetAllEnvironments(t *testing.T) {
 
 func TestGetEnvironment(t *testing.T) {
 	t.Parallel()
-	client, server := newTestAPIClient("/go/api/admin/environments/my_environment", serveFileAsJSON(t, "GET", "test-fixtures/get_environment_config.json", ApiVersion, DummyRequestBodyValidator))
+	client, server := newTestAPIClient("/go/api/admin/environments/my_environment",
+		serveFileAsJSON(t,
+			"GET",
+			"../test-fixtures/get_environment_config.json",
+			ApiVersion,
+			DummyRequestBodyValidator))
 	defer server.Close()
 	env, err := client.GetEnvironmentConfig("my_environment")
 	assert.NoError(t, err)

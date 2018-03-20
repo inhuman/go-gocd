@@ -1,4 +1,4 @@
-package gocd
+package src
 
 import "github.com/hashicorp/go-multierror"
 
