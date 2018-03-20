@@ -155,3 +155,4 @@ func TestDeletePackageAssociatedWithPipeline(t *testing.T) {
 
 	assert.Equal(t, "Cannot delete the package definition 'package-id-sdf' as it is used by pipeline(s): '[fromtemplate]'", resp.Message)
 }
+
