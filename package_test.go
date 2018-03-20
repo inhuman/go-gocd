@@ -59,26 +59,30 @@ func TestCreatePackageAlreadyExists(t *testing.T) {
 
 }
 
-func TestCreatePackageFail(t *testing.T) {
-	//t.Parallel()
-	//client, server := newTestAPIClient("/go/api/admin/packages",
-	//	serveFileAsJSONStatusCode(t,
-	//		"POST",
-	//		"test-fixtures/pipelines/create_pipeline_incorrect_material.json",
-	//		1,
-	//		DummyRequestBodyValidator,
-	//		http.StatusUnprocessableEntity))
-	//
-	//defer server.Close()
-	//
-	//_, multiErr := client.CreatePipeline(PipelineConfig{})
-	//
-	//fmt.Println(multiErr.Errors[0].Error())
-	//fmt.Println(multiErr.Errors[2])
-	//
-	//expect1 := "Validations failed for pipeline 'FromTemplate3'. Error(s): [Validation failed.]. Please correct and resubmit."
-	//assert.Equal(t, expect1, multiErr.Errors[0].Error())
-	//
-	//expect2 := "[Materials][destination] \"The destination directory must be unique across materials.\""
-	//assert.Equal(t, expect2, multiErr.Errors[2].Error())
+func TestCreatePackageWrongSpec(t *testing.T) {
+	t.Parallel()
+	client, server := newTestAPIClient("/go/api/admin/packages",
+		serveFileAsJSONStatusCode(t,
+			"POST",
+			"test-fixtures/package/create_package_wrong_spec.json",
+			1,
+			DummyRequestBodyValidator,
+			http.StatusUnprocessableEntity))
+
+	defer server.Close()
+
+	pkg, resp, err := client.CreatePackage(Package{})
+
+	var multiError *multierror.Error
+	multiError = nil
+	assert.Equal(t, multiError, err)
+
+	var pkgNil *Package
+	pkgNil = nil
+	assert.Equal(t, pkgNil, pkg)
+
+	assert.Equal(t, "Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", resp.Message)
+	assert.Equal(t, "\"Unsupported key(s) found : PACKAGE_ENV. Allowed key(s) are : PACKAGE_SPEC\"", string(resp.Data.Errors["configuration"][0]))
+	assert.Equal(t, "\"Package spec not specified\"", string(resp.Data.Errors["PACKAGE_SPEC"][0]))
+
 }
