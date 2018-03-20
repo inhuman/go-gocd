@@ -1,4 +1,4 @@
-package go_gocd
+package main
 
 import (
 	"testing"
