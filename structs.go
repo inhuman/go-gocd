@@ -173,8 +173,8 @@ type PluginMetadata struct {
 type AllPackageRepositories struct {
 	Links Links `json:"_links"`
 	Embedded struct {
-		PackageRepositories []PackageRepository
-	}
+		PackageRepositories []PackageRepository `json:"package_repositories"`
+	} `json:"_embedded"`
 }
 
 type Package struct {
