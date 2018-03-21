@@ -5,6 +5,7 @@ import (
 
 	"encoding/json"
 	"fmt"
+	"os"
 )
 
 func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *multierror.Error) {
@@ -14,8 +15,13 @@ func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *mul
 		Post(c.resolve("/go/api/admin/packages")).
 	//Package endpoints works only with api v1 header
 		Set("Accept", "application/vnd.go.cd.v1+json").
+		Set("Content-Type", "application/json'").
 		SendStruct(pkg).
 		End()
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
@@ -49,6 +55,10 @@ func (c *DefaultClient) DeletePackage(id string) (*ApiResponse, *multierror.Erro
 	//Package endpoints works only with api v1 header
 		Set("Accept", "application/vnd.go.cd.v1+json").
 		End()
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)

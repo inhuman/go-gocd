@@ -9,7 +9,6 @@ import (
 	"os"
 )
 
-
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, *multierror.Error) {
 	var multiError *multierror.Error
 
@@ -17,6 +16,10 @@ func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus,
 		Get(c.resolve(fmt.Sprintf("/go/api/pipelines/%s/status", pipelineName))).
 		Set("Accept", "application/vnd.go.cd.v"+strconv.Itoa(ApiVersion)+"+json").
 		End()
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
@@ -40,6 +43,10 @@ func (c *DefaultClient) DeletePipeline(pipelineName string) (*ApiResponse, *mult
 		Delete(c.resolve(fmt.Sprintf("/go/api/admin/pipelines/%s", pipelineName))).
 		Set("Accept", "application/vnd.go.cd.v"+strconv.Itoa(ApiVersion)+"+json").
 		End()
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
@@ -68,6 +75,9 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*ApiRespons
 		Set("Accept", "application/vnd.go.cd.v"+strconv.Itoa(ApiVersion)+"+json").
 		SendStruct(pipelineData).
 		End()
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
 
 	multierror.Append(multiError, errs...)
 	if errs != nil {
@@ -117,11 +127,6 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*ApiRespons
 
 				}
 			}
-		}
-
-
-		if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
-			fmt.Println(string(body))
 		}
 
 		return nil, multiError

@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"fmt"
 	"encoding/json"
+	"os"
 )
 
 func (c *DefaultClient) GetAllRepositories() (*AllPackageRepositories, *multierror.Error) {
@@ -14,6 +15,10 @@ func (c *DefaultClient) GetAllRepositories() (*AllPackageRepositories, *multierr
 	//Repositories endpoints works only with api v1 header
 		Set("Accept", "application/vnd.go.cd.v1+json").
 		End()
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
@@ -38,6 +43,10 @@ func (c *DefaultClient) GetRepository(id string) (*PackageRepository, *multierro
 	//Repositories endpoints works only with api v1 header
 		Set("Accept", "application/vnd.go.cd.v1+json").
 		End()
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
