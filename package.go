@@ -15,7 +15,7 @@ func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *mul
 		Post(c.resolve("/go/api/admin/packages")).
 	//Package endpoints works only with api v1 header
 		Set("Accept", "application/vnd.go.cd.v1+json").
-		Set("Content-Type", "application/json'").
+		Set("Content-Type", "application/json").
 		SendStruct(pkg).
 		End()
 

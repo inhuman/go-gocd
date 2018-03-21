@@ -153,7 +153,7 @@ type Links struct {
 
 type PackageRepository struct {
 	Links          Links           `json:"_links,omitempty"`
-	RepoId         string          `json:"repo_id"`
+	Id             string          `json:"id"`
 	Name           string          `json:"name"`
 	PluginMetadata PluginMetadata  `json:"plugin_metadata,omitempty"`
 	Configuration  []Configuration `json:"configuration,omitempty"`
