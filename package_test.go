@@ -47,19 +47,14 @@ func TestCreatePackageAlreadyExists(t *testing.T) {
 
 	defer server.Close()
 
-	pkg, resp, err := client.CreatePackage(Package{})
-
-	var multiError *multierror.Error
-	multiError = nil
-	assert.Equal(t, multiError, err)
+	pkg, _, err := client.CreatePackage(Package{})
 
 	var pkgNil *Package
 	pkgNil = nil
 	assert.Equal(t, pkgNil, pkg)
 
-	assert.Equal(t, "Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", resp.Message)
-	assert.Equal(t, "\"Cannot save package or repo, found duplicate packages. [Repo Name: 'artifactory-rpm', Package Name: 'package_name_2'], [Repo Name: 'artifactory-rpm', Package Name: 'package_name_']\"", string(resp.Data.Errors["id"][0]))
-
+	assert.Equal(t, "Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", err.Errors[0].Error())
+	assert.Equal(t, "[Common][id] \"Cannot save package or repo, found duplicate packages. [Repo Name: 'artifactory-rpm', Package Name: 'package_name_2'], [Repo Name: 'artifactory-rpm', Package Name: 'package_name_']\"", err.Errors[1].Error())
 }
 
 func TestCreatePackageWrongSpec(t *testing.T) {
@@ -75,19 +70,16 @@ func TestCreatePackageWrongSpec(t *testing.T) {
 
 	defer server.Close()
 
-	pkg, resp, err := client.CreatePackage(Package{})
-
-	var multiError *multierror.Error
-	multiError = nil
-	assert.Equal(t, multiError, err)
+	pkg, _, err := client.CreatePackage(Package{})
 
 	var pkgNil *Package
 	pkgNil = nil
 	assert.Equal(t, pkgNil, pkg)
 
-	assert.Equal(t, "Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", resp.Message)
-	assert.Equal(t, "\"Unsupported key(s) found : PACKAGE_ENV. Allowed key(s) are : PACKAGE_SPEC\"", string(resp.Data.Errors["configuration"][0]))
-	assert.Equal(t, "\"Package spec not specified\"", string(resp.Data.Errors["PACKAGE_SPEC"][0]))
+
+	assert.Equal(t, "Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", err.Errors[0].Error())
+	assert.Equal(t, "[Common][configuration] \"Unsupported key(s) found : PACKAGE_ENV. Allowed key(s) are : PACKAGE_SPEC\"", err.Errors[1].Error())
+	assert.Equal(t, "[Common][PACKAGE_SPEC] \"Package spec not specified\"", err.Errors[2].Error())
 }
 
 func TestDeletePackageSuccess(t *testing.T) {
@@ -155,4 +147,3 @@ func TestDeletePackageAssociatedWithPipeline(t *testing.T) {
 
 	assert.Equal(t, "Cannot delete the package definition 'package-id-sdf' as it is used by pipeline(s): '[fromtemplate]'", resp.Message)
 }
-

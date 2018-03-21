@@ -6,12 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"errors"
 )
 
 func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *multierror.Error) {
 	var multiError *multierror.Error
 
-	_, body, errs := c.Request.
+	response, body, errs := c.Request.
 		Post(c.resolve("/go/api/admin/packages")).
 	//Package endpoints works only with api v1 header
 		Set("Accept", "application/vnd.go.cd.v1+json").
@@ -22,11 +23,33 @@ func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *mul
 	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
 		fmt.Println(string(body))
 	}
+	var apiResponse ApiResponse
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
 		return nil, nil, multiError
 	}
+
+	if response.StatusCode != 200 {
+		err := json.Unmarshal([]byte(body), &apiResponse)
+		if err != nil {
+			multiError = multierror.Append(multiError, err)
+			return nil, nil, multiError
+		}
+
+		multiError = multierror.Append(multiError, errors.New(apiResponse.Message))
+
+		// Check common pipeline errors
+		if len(apiResponse.Data.Errors) > 0 {
+			for fieldName, respErrArr := range apiResponse.Data.Errors {
+				for _, respErr := range respErrArr {
+					multiError = multierror.Append(
+						multiError, errors.New("[Common]["+fieldName+"] "+string(respErr)))
+				}
+			}
+		}
+	}
+
 	var Package Package
 
 	jsonErr := json.Unmarshal([]byte(body), &Package)
