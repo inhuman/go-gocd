@@ -181,14 +181,14 @@ type PluginMetadata struct {
 type AllPackageRepositories struct {
 	Links Links `json:"_links"`
 	Embedded struct {
-		PackageRepositories []PackageRepository `json:"package_repositories"`
+		PackageRepositories []Repository `json:"package_repositories"`
 	} `json:"_embedded"`
 }
 
 type Package struct {
-	Name          string          `json:"name"`
-	Id            string          `json:"id"`
-	AutoUpdate    bool            `json:"auto_update"`
-	PackageRepo   Repository      `json:"package_repo"`
-	Configuration []Configuration `json:"configuration"`
+	Name          string            `json:"name"`
+	Id            string            `json:"id"`
+	AutoUpdate    bool              `json:"auto_update"`
+	PackageRepo   PackageRepository `json:"package_repo"`
+	Configuration []Configuration   `json:"configuration"`
 }
