@@ -159,6 +159,14 @@ type PackageRepository struct {
 	Configuration  []Configuration `json:"configuration,omitempty"`
 }
 
+type Repository struct {
+	Links          Links           `json:"_links,omitempty"`
+	RepoId         string          `json:"repo_id"`
+	Name           string          `json:"name"`
+	PluginMetadata PluginMetadata  `json:"plugin_metadata,omitempty"`
+	Configuration  []Configuration `json:"configuration,omitempty"`
+}
+
 type Configuration struct {
 	Key            string `json:"key"`
 	Value          string `json:"value,omitempty"`
@@ -173,7 +181,7 @@ type PluginMetadata struct {
 type AllPackageRepositories struct {
 	Links Links `json:"_links"`
 	Embedded struct {
-		PackageRepositories []PackageRepository `json:"package_repositories"`
+		Repositories []PackageRepository `json:"package_repositories"`
 	} `json:"_embedded"`
 }
 
