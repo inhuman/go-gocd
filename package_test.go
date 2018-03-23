@@ -53,8 +53,8 @@ func TestCreatePackageAlreadyExists(t *testing.T) {
 	pkgNil = nil
 	assert.Equal(t, pkgNil, pkg)
 
-	assert.Equal(t, "Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", err.Errors[0].Error())
-	assert.Equal(t, "[Common][id] \"Cannot save package or repo, found duplicate packages. [Repo Name: 'artifactory-rpm', Package Name: 'package_name_2'], [Repo Name: 'artifactory-rpm', Package Name: 'package_name_']\"", err.Errors[1].Error())
+	assert.Equal(t, "[] Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", err.Errors[0].Error())
+	assert.Equal(t, "[data][id] Cannot save package or repo, found duplicate packages. [Repo Name: 'artifactory-rpm', Package Name: 'package_name_2'], [Repo Name: 'artifactory-rpm', Package Name: 'package_name_']", err.Errors[1].Error())
 }
 
 func TestCreatePackageWrongSpec(t *testing.T) {
@@ -77,9 +77,9 @@ func TestCreatePackageWrongSpec(t *testing.T) {
 	assert.Equal(t, pkgNil, pkg)
 
 
-	assert.Equal(t, "Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", err.Errors[0].Error())
-	assert.Equal(t, "[Common][configuration] \"Unsupported key(s) found : PACKAGE_ENV. Allowed key(s) are : PACKAGE_SPEC\"", err.Errors[1].Error())
-	assert.Equal(t, "[Common][PACKAGE_SPEC] \"Package spec not specified\"", err.Errors[2].Error())
+	assert.Equal(t, "[] Validations failed for package 'package-id-sdf'. Error(s): [Validation failed.]. Please correct and resubmit.", err.Errors[0].Error())
+	assert.Equal(t, "[data][PACKAGE_SPEC] Package spec not specified", err.Errors[1].Error())
+	assert.Equal(t, "[data][configuration] Unsupported key(s) found : PACKAGE_ENV. Allowed key(s) are : PACKAGE_SPEC", err.Errors[2].Error())
 }
 
 func TestDeletePackageSuccess(t *testing.T) {

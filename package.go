@@ -2,11 +2,10 @@ package go_gocd
 
 import (
 	"github.com/hashicorp/go-multierror"
-
+	jerrparser "github.com/inhuman/go-json-errors-parser"
 	"encoding/json"
 	"fmt"
 	"os"
-	"errors"
 )
 
 func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *multierror.Error) {
@@ -23,7 +22,6 @@ func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *mul
 	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
 		fmt.Println(string(body))
 	}
-	var apiResponse ApiResponse
 
 	if errs != nil {
 		multiError = multierror.Append(multiError, errs...)
@@ -31,22 +29,11 @@ func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *mul
 	}
 
 	if response.StatusCode != 200 {
-		err := json.Unmarshal([]byte(body), &apiResponse)
-		if err != nil {
-			multiError = multierror.Append(multiError, err)
-			return nil, nil, multiError
-		}
 
-		multiError = multierror.Append(multiError, errors.New(apiResponse.Message))
+		parsedErrors := jerrparser.ParseErrors(string(body))
 
-		// Check common pipeline errors
-		if len(apiResponse.Data.Errors) > 0 {
-			for fieldName, respErrArr := range apiResponse.Data.Errors {
-				for _, respErr := range respErrArr {
-					multiError = multierror.Append(
-						multiError, errors.New("[Common]["+fieldName+"] "+string(respErr)))
-				}
-			}
+		if parsedErrors.IsErrors() {
+			multiError = multierror.Append(multiError, parsedErrors.GetErrors()...)
 		}
 	}
 
