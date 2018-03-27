@@ -29,9 +29,7 @@ func (c *DefaultClient) CreatePackage(pkg Package) (*Package, *ApiResponse, *mul
 	}
 
 	if response.StatusCode != 200 {
-
 		parsedErrors := jerrparser.ParseErrors(string(body))
-
 		if parsedErrors.IsErrors() {
 			multiError = multierror.Append(multiError, parsedErrors.GetErrors()...)
 		}
