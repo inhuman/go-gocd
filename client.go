@@ -21,6 +21,8 @@ type Client interface {
 	GetPipelineStatus(pipelineName string) (*PipelineStatus, *multierror.Error)
 	CreatePipeline(pipelineConfig PipelineConfig) (*ApiResponse, *multierror.Error)
 	DeletePipeline(pipelineName string) (*ApiResponse, *multierror.Error)
+	PausePipeline(pipelineName, pauseCause  string) (*ApiResponse, *multierror.Error)
+	UnpausePipeline(pipelineName string) (*ApiResponse, *multierror.Error)
 
 	// Jobs
 	GetScheduledJobs() ([]*ScheduledJob, error)

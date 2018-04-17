@@ -50,8 +50,8 @@ func main() {
 - [ ] Pipelines
   - [ ] Get pipeline instance
   - [x] Get pipeline status
-  - [ ] Pause a pipeline
-  - [ ] Unpause a pipeline
+  - [x] Pause a pipeline
+  - [x] Unpause a pipeline
   - [ ] Releasing a pipeline lock
   - [ ] Scheduling Pipelines
 - [ ] Stages
@@ -78,7 +78,7 @@ func main() {
   - [ ] Get pipeline Configuration
   - [ ] Edit Pipeline configuration
   - [x] Create Pipeline
-  - [ ] Delete Pipeline
+  - [x] Delete Pipeline
 - [ ] Environment Config
   - [x] Get all environments
   - [x] Get environment config

@@ -63,3 +63,45 @@ func TestCreatePipelineIncorrectMaterial(t *testing.T) {
 	expect2 := "[Materials][destination] \"The destination directory must be unique across materials.\""
 	assert.Equal(t, expect2, multiErr.Errors[2].Error())
 }
+
+func TestPausePipeline(t *testing.T) {
+	t.Parallel()
+	client, server := newTestAPIClient("/go/api/pipelines/pipeline1/pause",
+		serveFileAsJSONStatusCode(t,
+			"POST",
+			"test-fixtures/pipelines/pause_pipeline.json",
+			1,
+			DummyRequestBodyValidator,
+			http.StatusOK))
+
+	defer server.Close()
+
+	resp, err := client.PausePipeline("pipeline1", "just pause")
+
+	assert.Equal(t, "Pipeline 'pipeline1' paused successfully.", resp.Message)
+	var multiError *multierror.Error
+	multiError = nil
+
+	assert.Equal(t, multiError, err)
+}
+
+func TestUnpausePipeline(t *testing.T) {
+	t.Parallel()
+	client, server := newTestAPIClient("/go/api/pipelines/pipeline1/unpause",
+		serveFileAsJSONStatusCode(t,
+			"POST",
+			"test-fixtures/pipelines/unpause_pipeline.json",
+			1,
+			DummyRequestBodyValidator,
+			http.StatusOK))
+
+	defer server.Close()
+
+	resp, err := client.UnpausePipeline("pipeline1")
+
+	assert.Equal(t, "Pipeline 'pipeline1' unpaused successfully.", resp.Message)
+	var multiError *multierror.Error
+	multiError = nil
+
+	assert.Equal(t, multiError, err)
+}

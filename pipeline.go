@@ -142,3 +142,71 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*ApiRespons
 
 	return &resp, nil
 }
+
+func (c *DefaultClient) PausePipeline(pipelineName, pauseCause string) (*ApiResponse, *multierror.Error) {
+	var multiError *multierror.Error
+
+	_, body, errs := c.Request.
+		Post(c.resolve(fmt.Sprintf("/go/api/pipelines/%s/pause", pipelineName))).
+		Set("Accept", "application/vnd.go.cd.v1+json").
+		SendStruct(struct {
+		Message string
+	}{
+		pauseCause,
+	}).
+		End()
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
+
+	if errs != nil {
+		multiError = multierror.Append(multiError, errs...)
+		return nil, multiError
+	}
+	var apiResponse ApiResponse
+
+	jsonErr := json.Unmarshal([]byte(body), &apiResponse)
+	if jsonErr != nil {
+		multiError = multierror.Append(multiError, jsonErr)
+		return nil, multiError
+	}
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
+
+	return &apiResponse, multiError
+}
+
+func (c *DefaultClient) UnpausePipeline(pipelineName string) (*ApiResponse, *multierror.Error) {
+	var multiError *multierror.Error
+
+	_, body, errs := c.Request.
+		Post(c.resolve(fmt.Sprintf("/go/api/pipelines/%s/unpause", pipelineName))).
+		Set("Accept", "application/vnd.go.cd.v1+json").
+		Set("X-GoCD-Confirm", "true").
+		End()
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
+
+	if errs != nil {
+		multiError = multierror.Append(multiError, errs...)
+		return nil, multiError
+	}
+	var apiResponse ApiResponse
+
+	jsonErr := json.Unmarshal([]byte(body), &apiResponse)
+	if jsonErr != nil {
+		multiError = multierror.Append(multiError, jsonErr)
+		return nil, multiError
+	}
+
+	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
+		fmt.Println(string(body))
+	}
+
+	return &apiResponse, multiError
+}
