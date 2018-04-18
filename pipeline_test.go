@@ -57,10 +57,10 @@ func TestCreatePipelineIncorrectMaterial(t *testing.T) {
 
 	_, multiErr := client.CreatePipeline(PipelineConfig{})
 
-	expect1 := "Validations failed for pipeline 'FromTemplate3'. Error(s): [Validation failed.]. Please correct and resubmit."
+	expect1 := "[] Validations failed for pipeline 'FromTemplate3'. Error(s): [Validation failed.]. Please correct and resubmit."
 	assert.Equal(t, expect1, multiErr.Errors[0].Error())
 
-	expect2 := "[Materials][destination] \"The destination directory must be unique across materials.\""
+	expect2 := "[materials][destination] Invalid Destination Directory. Every material needs a different destination directory and the directories should not be nested."
 	assert.Equal(t, expect2, multiErr.Errors[2].Error())
 }
 

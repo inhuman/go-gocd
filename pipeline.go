@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"strconv"
 	"fmt"
-	"github.com/pkg/errors"
 	"os"
+	jerrparser "github.com/inhuman/go-json-errors-parser"
 )
 
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, *multierror.Error) {
@@ -84,49 +84,11 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*ApiRespons
 		return nil, multiError
 	}
 
-	var apiResponse ApiResponse
-
 	if response.StatusCode != 200 {
 
-		err := json.Unmarshal([]byte(body), &apiResponse)
-		if err != nil {
-			multiError = multierror.Append(multiError, err)
-			return nil, multiError
-		}
-
-		multiError = multierror.Append(multiError, errors.New(apiResponse.Message))
-
-		// Check common pipeline errors
-		if len(apiResponse.Data.Errors) > 0 {
-			for fieldName, respErrArr := range apiResponse.Data.Errors {
-				for _, respErr := range respErrArr {
-					multiError = multierror.Append(
-						multiError, errors.New("[Common]["+fieldName+"] "+string(respErr)))
-				}
-			}
-		}
-
-		// Check material pipeline errors
-		for _, mat := range apiResponse.Data.Materials {
-			if len(mat.Errors) > 0 {
-				for fieldName, respErrArr := range mat.Errors {
-					for _, respErr := range respErrArr {
-						multiError = multierror.Append(
-							multiError, errors.New("[Materials]["+fieldName+"] "+string(respErr)))
-					}
-				}
-			}
-		}
-
-		// Check environment variables pipeline errors
-		for _, mat := range apiResponse.Data.EnvironmentVariables {
-			if len(mat.Errors.ValueForDisplay) > 0 {
-				for _, respErr := range mat.Errors.ValueForDisplay {
-					multiError = multierror.Append(
-						multiError, errors.New("[EnvironmentVariables] "+string(respErr)))
-
-				}
-			}
+		parsedErrors := jerrparser.ParseErrors(string(body))
+		if parsedErrors.IsErrors() {
+			multiError = multierror.Append(multiError, parsedErrors.GetErrors()...)
 		}
 
 		return nil, multiError
