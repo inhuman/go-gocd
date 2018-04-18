@@ -1,0 +1,8 @@
+{
+  "Data": {
+    "Errors": null,
+    "Materials": null,
+    "environment_variables": null
+  },
+  "message": "pipeline 'pipeline1' not found."
+}

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"github.com/stretchr/testify/assert"
 	"github.com/hashicorp/go-multierror"
-	"fmt"
 )
 
 func TestCreatePipelineSuccess(t *testing.T) {
@@ -91,7 +90,7 @@ func TestPausePipelineNotExists(t *testing.T) {
 	client, server := newTestAPIClient("/go/api/pipelines/pipeline1/pause",
 		serveFileAsJSONStatusCode(t,
 			"POST",
-			"test-fixtures/pipelines/pause_pipeline.json",
+			"test-fixtures/pipelines/pause_pipeline_not_exists.json",
 			1,
 			DummyRequestBodyValidator,
 			http.StatusNotFound))
@@ -100,14 +99,7 @@ func TestPausePipelineNotExists(t *testing.T) {
 
 	_, err := client.PausePipeline("pipeline1", "just pause")
 
-	//assert.Equal(t, "Pipeline 'pipeline1' paused successfully.", resp.Message)
-
-	fmt.Printf("%s\n", err)
-
-	var multiError *multierror.Error
-	multiError = nil
-
-	assert.Equal(t, multiError, err)
+	assert.Equal(t, "pipeline 'pipeline1' not found.", err.Errors[0].Error())
 }
 
 

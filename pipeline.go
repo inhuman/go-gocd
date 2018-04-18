@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	jerrparser "github.com/inhuman/go-json-errors-parser"
+	"errors"
 )
 
 func (c *DefaultClient) GetPipelineStatus(pipelineName string) (*PipelineStatus, *multierror.Error) {
@@ -128,12 +129,11 @@ func (c *DefaultClient) PausePipeline(pipelineName, pauseCause string) (*ApiResp
 	}
 
 	if response.StatusCode != 200 {
-
 		parsedErrors := jerrparser.ParseErrors(string(body))
 		if parsedErrors.IsErrors() {
 			multiError = multierror.Append(multiError, parsedErrors.GetErrors()...)
+			return nil, multiError
 		}
-		return nil, multiError
 	}
 
 	var apiResponse ApiResponse
@@ -142,6 +142,10 @@ func (c *DefaultClient) PausePipeline(pipelineName, pauseCause string) (*ApiResp
 	if jsonErr != nil {
 		multiError = multierror.Append(multiError, jsonErr)
 		return nil, multiError
+	}
+
+	if response.StatusCode == 404 {
+		multiError = multierror.Append(multiError, errors.New(apiResponse.Message))
 	}
 
 	if os.Getenv("GOCD_CLIENT_DEBUG") == "1" {
