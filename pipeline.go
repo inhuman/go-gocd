@@ -108,7 +108,7 @@ func (c *DefaultClient) CreatePipeline(pipelineData PipelineConfig) (*ApiRespons
 func (c *DefaultClient) PausePipeline(pipelineName, pauseCause string) (*ApiResponse, *multierror.Error) {
 	var multiError *multierror.Error
 
-	_, body, errs := c.Request.
+	response, body, errs := c.Request.
 		Post(c.resolve(fmt.Sprintf("/go/api/pipelines/%s/pause", pipelineName))).
 		Set("Accept", "application/vnd.go.cd.v1+json").
 		SendStruct(struct {
@@ -126,6 +126,16 @@ func (c *DefaultClient) PausePipeline(pipelineName, pauseCause string) (*ApiResp
 		multiError = multierror.Append(multiError, errs...)
 		return nil, multiError
 	}
+
+	if response.StatusCode != 200 {
+
+		parsedErrors := jerrparser.ParseErrors(string(body))
+		if parsedErrors.IsErrors() {
+			multiError = multierror.Append(multiError, parsedErrors.GetErrors()...)
+		}
+		return nil, multiError
+	}
+
 	var apiResponse ApiResponse
 
 	jsonErr := json.Unmarshal([]byte(body), &apiResponse)
@@ -144,7 +154,7 @@ func (c *DefaultClient) PausePipeline(pipelineName, pauseCause string) (*ApiResp
 func (c *DefaultClient) UnpausePipeline(pipelineName string) (*ApiResponse, *multierror.Error) {
 	var multiError *multierror.Error
 
-	_, body, errs := c.Request.
+	response, body, errs := c.Request.
 		Post(c.resolve(fmt.Sprintf("/go/api/pipelines/%s/unpause", pipelineName))).
 		Set("Accept", "application/vnd.go.cd.v1+json").
 		Set("X-GoCD-Confirm", "true").
@@ -158,6 +168,16 @@ func (c *DefaultClient) UnpausePipeline(pipelineName string) (*ApiResponse, *mul
 		multiError = multierror.Append(multiError, errs...)
 		return nil, multiError
 	}
+
+	if response.StatusCode != 200 {
+
+		parsedErrors := jerrparser.ParseErrors(string(body))
+		if parsedErrors.IsErrors() {
+			multiError = multierror.Append(multiError, parsedErrors.GetErrors()...)
+		}
+		return nil, multiError
+	}
+
 	var apiResponse ApiResponse
 
 	jsonErr := json.Unmarshal([]byte(body), &apiResponse)
