@@ -7,7 +7,7 @@ Go Lang library to access [GoCD API](https://api.go.cd/current/).
 package go_gocd
 
 import (
-  "github.com/ashwanthkumar/go-gocd"
+  "github.com/inhuman/go-gocd"
 )
 
 func main() {
